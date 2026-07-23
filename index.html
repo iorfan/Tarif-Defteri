@@ -1,0 +1,3300 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
+  <meta name="theme-color" content="#6c4cff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Lezzet Defteri">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="Fotoğraflı, etiketli, alışveriş listeli ve oynanabilir tariflere sahip kişisel tarif defteri">
+  <title>Lezzet Defteri v4.1</title>
+  <style>
+:root {
+  --primary: #6c4cff;
+  --primary-dark: #5135db;
+  --primary-soft: #eee9ff;
+  --accent: #ffb547;
+  --accent-dark: #7c4d00;
+  --bg: #f6f3ff;
+  --surface: #ffffff;
+  --surface-soft: #fbfaff;
+  --text: #241f36;
+  --muted: #756e87;
+  --line: #e3dff0;
+  --danger: #c33f58;
+  --success: #25865d;
+  --shadow: 0 20px 60px rgba(59, 42, 110, .11);
+  --shadow-small: 0 10px 30px rgba(59, 42, 110, .08);
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-sm: 11px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; min-height: 100vh; min-height: 100dvh; background: var(--bg); color: var(--text); overscroll-behavior-y: none; }
+body.modal-open { overflow: hidden; }
+button, input, select, textarea { font: inherit; }
+button, label.file-label { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; touch-action: manipulation; }
+img { max-width: 100%; display: block; }
+h1, h2, h3, p { margin-top: 0; }
+.hidden { display: none !important; }
+.mobile-only { display: none; }
+
+.app-shell { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100vh; min-height: 100dvh; }
+.sidebar {
+  position: sticky; top: 0; height: 100vh; height: 100dvh; padding: max(26px, env(safe-area-inset-top)) 20px max(22px, env(safe-area-inset-bottom));
+  color: white; display: flex; flex-direction: column; gap: 34px;
+  background:
+    radial-gradient(circle at 0 0, rgba(255,255,255,.18), transparent 34%),
+    linear-gradient(165deg, var(--primary), var(--primary-dark));
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-mark { width: 48px; height: 48px; display: grid; place-items: center; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.18); border-radius: 15px; font-size: 25px; }
+.brand strong, .brand span { display: block; }
+.brand span { margin-top: 3px; color: rgba(255,255,255,.7); font-size: 12px; }
+.nav-list { display: grid; gap: 8px; }
+.nav-button { min-height: 48px; border: 0; background: transparent; color: rgba(255,255,255,.76); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; text-align: left; }
+.nav-button span { font-size: 21px; width: 24px; }
+.nav-button b { font-weight: 720; }
+.nav-button:hover, .nav-button.active { background: rgba(255,255,255,.16); color: white; }
+.sidebar-actions { margin-top: auto; display: grid; gap: 10px; }
+
+.main-content { width: 100%; max-width: 1540px; margin: 0 auto; padding: max(30px, env(safe-area-inset-top)) clamp(18px, 4vw, 62px) 72px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 28px; }
+.topbar-actions { display: flex; align-items: center; gap: 9px; }
+h1 { margin-bottom: 0; font-size: clamp(30px, 3vw, 42px); letter-spacing: -.04em; }
+h2 { margin-bottom: 10px; letter-spacing: -.03em; }
+.eyebrow { margin-bottom: 8px; color: var(--primary); font-size: 12px; font-weight: 850; letter-spacing: .11em; text-transform: uppercase; }
+.eyebrow.light { color: rgba(255,255,255,.76); }
+.page { display: none; }
+.page.active { display: block; animation: fade-in .2s ease; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(5px); } }
+
+.primary-button, .secondary-button, .accent-button, .glass-button, .text-button {
+  min-height: 44px; border: 0; border-radius: 13px; padding: 10px 16px; font-weight: 780; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.primary-button { color: white; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 25%, transparent); }
+.primary-button:hover { filter: brightness(.98); }
+.secondary-button { color: var(--text); background: var(--surface-soft); border: 1px solid var(--line); }
+.sidebar .secondary-button { color: white; background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.18); }
+.accent-button { color: var(--accent-dark); background: var(--accent); box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 28%, transparent); }
+.glass-button { color: white; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); }
+.text-button { min-height: 38px; padding: 6px 8px; color: var(--primary); background: transparent; }
+.full-width { width: 100%; text-align: center; }
+.file-label { cursor: pointer; }
+.file-label.compact { width: fit-content; }
+.icon-circle { width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; background: var(--surface); }
+
+.random-spotlight {
+  position: relative; overflow: hidden; min-height: 330px; border-radius: var(--radius-xl); color: white;
+  display: grid; grid-template-columns: minmax(250px, .85fr) minmax(0, 1.15fr); box-shadow: var(--shadow);
+  background:
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--accent) 50%, transparent), transparent 34%),
+    linear-gradient(135deg, var(--primary-dark), var(--primary));
+}
+.random-spotlight::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.06), transparent 45%); }
+.spotlight-media { min-height: 330px; display: grid; place-items: center; background: rgba(255,255,255,.08); overflow: hidden; }
+.spotlight-media img { width: 100%; height: 100%; object-fit: cover; }
+.spotlight-media span { font-size: clamp(90px, 12vw, 170px); filter: drop-shadow(0 18px 25px rgba(0,0,0,.22)); }
+.spotlight-content { position: relative; z-index: 1; align-self: center; padding: clamp(28px, 5vw, 56px); }
+.spotlight-content h2 { max-width: 760px; font-size: clamp(34px, 5vw, 60px); line-height: .98; margin-bottom: 15px; }
+.spotlight-content > p:not(.eyebrow) { max-width: 650px; color: rgba(255,255,255,.77); font-size: 17px; line-height: 1.55; }
+.spotlight-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.spotlight-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.spotlight-meta span { padding: 7px 10px; border-radius: 999px; background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.16); font-size: 13px; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 22px 0 38px; }
+.stat-card { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 19px; box-shadow: var(--shadow-small); }
+.stat-card::before { content: ""; position: absolute; width: 90px; height: 90px; right: -40px; top: -40px; border-radius: 50%; background: var(--primary-soft); }
+.stat-card span { display: block; color: var(--muted); font-size: 13px; }
+.stat-card strong { position: relative; display: block; margin-top: 8px; font-size: 30px; }
+
+.content-section { margin-top: 38px; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.section-heading h2 { margin-bottom: 0; font-size: 26px; }
+.recipe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.recipe-card { min-width: 0; overflow: hidden; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-small); transition: transform .18s ease, box-shadow .18s ease; }
+.recipe-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.recipe-card-top { position: relative; min-height: 185px; display: grid; place-items: center; overflow: hidden; background: linear-gradient(135deg, var(--primary-soft), color-mix(in srgb, var(--accent) 30%, white)); }
+.recipe-card-top img { width: 100%; height: 185px; object-fit: cover; }
+.recipe-emoji { font-size: 66px; filter: drop-shadow(0 12px 16px rgba(0,0,0,.12)); }
+.favorite-button { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); backdrop-filter: blur(8px); box-shadow: 0 5px 15px rgba(0,0,0,.12); font-size: 21px; }
+.recipe-card-body { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+.recipe-card h3 { margin-bottom: 8px; font-size: 21px; }
+.recipe-card-description { min-height: 43px; color: var(--muted); font-size: 14px; line-height: 1.52; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+.tag { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: color-mix(in srgb, var(--primary) 74%, #000); background: var(--primary-soft); border: 1px solid color-mix(in srgb, var(--primary) 12%, transparent); border-radius: 999px; padding: 6px 9px; font-size: 12px; }
+.tag.alt { color: #6d4b00; background: color-mix(in srgb, var(--accent) 23%, white); border-color: color-mix(in srgb, var(--accent) 35%, white); }
+.meta-row { display: flex; flex-wrap: wrap; gap: 11px; color: var(--muted); font-size: 13px; margin-top: auto; }
+.card-actions { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; margin-top: 16px; }
+.card-actions button { min-height: 42px; border: 0; border-radius: 11px; padding: 8px 11px; font-weight: 720; }
+.view-button { color: white; background: var(--primary); }
+.icon-button { color: var(--text); background: var(--surface-soft); border: 1px solid var(--line) !important; }
+.empty-state { grid-column: 1 / -1; text-align: center; background: var(--surface); border: 1px dashed color-mix(in srgb, var(--primary) 28%, var(--line)); border-radius: var(--radius-lg); padding: 46px 20px; color: var(--muted); }
+.empty-state strong { display: block; color: var(--text); margin-bottom: 7px; font-size: 19px; }
+
+.filter-panel, .editor-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl); padding: 24px; box-shadow: var(--shadow-small); }
+.search-field label, .filter-field label, .form-field > label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 820; }
+input, select, textarea { width: 100%; min-height: 46px; color: var(--text); background: var(--surface); border: 1px solid color-mix(in srgb, var(--primary) 13%, var(--line)); border-radius: 12px; padding: 11px 12px; outline: none; -webkit-appearance: none; appearance: none; }
+select { background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 17px) 19px, calc(100% - 12px) 19px; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
+input[type="color"] { padding: 5px; min-height: 54px; }
+input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 13%, transparent); }
+input.invalid, select.invalid, textarea.invalid { border-color: var(--danger); }
+textarea { resize: vertical; line-height: 1.52; }
+.filter-grid { margin-top: 16px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.filter-footer { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--muted); }
+.active-filter-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 15px 0; }
+.filter-chip { min-height: 36px; border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--line)); border-radius: 999px; padding: 6px 11px; color: var(--primary); background: var(--primary-soft); }
+
+.form-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
+.form-header h2 { margin-bottom: 5px; }
+.form-subtitle { max-width: 760px; margin-bottom: 0; color: var(--muted); line-height: 1.5; }
+.form-grid { margin-top: 22px; display: grid; gap: 17px; }
+.two-column { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.span-2 { grid-column: 1 / -1; }
+.form-field small { display: block; margin-top: 7px; color: var(--muted); line-height: 1.4; }
+.field-error { display: block; min-height: 17px; margin-top: 5px; color: var(--danger); font-size: 12px; }
+.form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+.photo-editor { display: grid; grid-template-columns: 220px 1fr; gap: 18px; align-items: center; }
+.photo-preview { min-height: 150px; border-radius: 17px; border: 1px dashed color-mix(in srgb, var(--primary) 30%, var(--line)); background: var(--primary-soft); display: grid; place-items: center; align-content: center; gap: 5px; overflow: hidden; color: var(--muted); }
+.photo-preview span { font-size: 38px; }
+.photo-preview img { width: 100%; height: 160px; object-fit: cover; }
+.photo-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.photo-actions small { flex-basis: 100%; }
+.suggested-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.suggested-tag { min-height: 34px; border: 1px solid var(--line); border-radius: 999px; padding: 5px 10px; background: var(--surface-soft); color: var(--muted); }
+.suggested-tag:hover { border-color: var(--primary); color: var(--primary); }
+
+.modal { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: max(15px, env(safe-area-inset-top)) 15px max(15px, env(safe-area-inset-bottom)); }
+.modal-backdrop { position: absolute; inset: 0; background: rgba(22, 18, 38, .68); backdrop-filter: blur(5px); }
+.modal-card { position: relative; width: min(820px, 100%); max-height: calc(100dvh - 30px); overflow: auto; border-radius: 25px; background: var(--surface); box-shadow: 0 35px 90px rgba(0,0,0,.3); -webkit-overflow-scrolling: touch; }
+.dialog-close { position: absolute; z-index: 4; top: 12px; right: 12px; width: 44px; height: 44px; border: 0; border-radius: 50%; color: var(--text); background: rgba(255,255,255,.9); box-shadow: 0 6px 18px rgba(0,0,0,.12); font-size: 28px; }
+.dialog-hero { min-height: 280px; position: relative; display: flex; align-items: flex-end; overflow: hidden; padding: 34px; color: white; background: linear-gradient(135deg, var(--primary-dark), var(--primary)); }
+.dialog-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(20,13,41,.87), rgba(20,13,41,.08) 70%); }
+.dialog-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.dialog-hero-placeholder { position: absolute; inset: 0; display: grid; place-items: center; font-size: 110px; background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--accent) 45%, var(--primary))); }
+.dialog-hero-content { position: relative; z-index: 1; width: 100%; }
+.dialog-hero h2 { margin: 8px 0; font-size: clamp(31px, 6vw, 48px); }
+.dialog-hero p { max-width: 680px; margin-bottom: 0; color: rgba(255,255,255,.8); }
+.dialog-body { padding: 30px 34px 36px; }
+.dialog-columns { display: grid; grid-template-columns: .9fr 1.1fr; gap: 30px; }
+.dialog-body ol, .dialog-body ul { padding-left: 20px; line-height: 1.7; }
+.dialog-toolbar { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 22px; }
+.delete-button { color: var(--danger); }
+.theme-card { width: min(560px, 100%); }
+.theme-content { padding: 32px; }
+.theme-presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+.theme-preset { min-height: 68px; border: 2px solid transparent; border-radius: 15px; padding: 7px; background: var(--surface-soft); }
+.theme-preset:hover, .theme-preset.active { border-color: var(--primary); }
+.preset-swatch { height: 48px; border-radius: 10px; }
+.theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.theme-grid label { font-size: 13px; font-weight: 750; }
+.theme-grid input { margin-top: 7px; }
+.theme-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+
+.toast { position: fixed; z-index: 200; right: max(20px, env(safe-area-inset-right)); bottom: max(20px, env(safe-area-inset-bottom)); max-width: min(420px, calc(100vw - 30px)); color: white; background: #241f36; border-radius: 13px; padding: 13px 17px; box-shadow: var(--shadow); opacity: 0; transform: translateY(14px); pointer-events: none; transition: .2s ease; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 1180px) {
+  .recipe-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filter-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 820px) {
+  .app-shell { display: block; }
+  .sidebar { position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; top: auto; width: 100%; height: auto; padding: 7px 10px max(7px, env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--primary-dark) 96%, transparent); backdrop-filter: blur(16px); }
+  .brand, .sidebar-actions { display: none; }
+  .nav-list { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .nav-button { min-height: 58px; flex-direction: column; justify-content: center; gap: 2px; padding: 5px; font-size: 11px; text-align: center; }
+  .nav-button span { width: auto; font-size: 20px; }
+  .main-content { padding: max(20px, env(safe-area-inset-top)) 15px calc(94px + env(safe-area-inset-bottom)); }
+  .mobile-add, .mobile-only { display: inline-flex; }
+  .topbar .eyebrow { display: none; }
+  h1 { font-size: 30px; }
+  .random-spotlight { grid-template-columns: 1fr; min-height: 0; }
+  .spotlight-media { min-height: 220px; max-height: 280px; }
+  .spotlight-content { padding: 26px 22px 30px; }
+  .spotlight-content h2 { font-size: clamp(32px, 10vw, 48px); }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .filter-grid, .two-column, .dialog-columns, .theme-grid { grid-template-columns: 1fr; }
+  .span-2 { grid-column: auto; }
+  .photo-editor { grid-template-columns: 1fr; }
+  .photo-preview { min-height: 190px; }
+  .sticky-form-actions { position: sticky; z-index: 5; bottom: calc(72px + env(safe-area-inset-bottom)); margin: 24px -12px -12px; padding: 12px; border-top: 1px solid var(--line); border-radius: 15px; background: color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter: blur(12px); }
+  .modal { align-items: end; padding: 0; }
+  .modal-card { width: 100%; max-height: calc(100dvh - max(10px, env(safe-area-inset-top))); border-radius: 25px 25px 0 0; padding-bottom: env(safe-area-inset-bottom); }
+  .dialog-hero { min-height: 260px; padding: 28px 22px; }
+  .dialog-body { padding: 26px 22px 32px; }
+  .theme-content { padding: 28px 22px; }
+  .theme-presets { grid-template-columns: repeat(2, 1fr); }
+  .toast { left: 15px; right: 15px; bottom: calc(82px + env(safe-area-inset-bottom)); max-width: none; text-align: center; }
+}
+
+@media (max-width: 560px) {
+  .topbar { align-items: flex-start; }
+  .mobile-add { padding-inline: 12px; }
+  .recipe-grid { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat-card { padding: 16px; }
+  .stat-card strong { font-size: 25px; }
+  .filter-panel, .editor-card { padding: 17px; border-radius: 22px; }
+  .filter-grid { grid-template-columns: 1fr; }
+  .filter-footer { align-items: flex-start; }
+  .form-header { display: block; }
+  .form-header #cancelEditButton { margin-top: 12px; }
+  .form-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .spotlight-actions { display: grid; grid-template-columns: 1fr; }
+  .spotlight-actions button { width: 100%; }
+  .section-heading { align-items: flex-start; }
+  .recipe-card-top, .recipe-card-top img { height: 210px; min-height: 210px; }
+}
+
+@supports not (color: color-mix(in srgb, red, blue)) {
+  .primary-button { box-shadow: 0 8px 18px rgba(108,76,255,.22); }
+  .random-spotlight { background: linear-gradient(135deg, #5135db, #6c4cff); }
+  .tag, .filter-chip, .photo-preview { background: #eee9ff; }
+}
+
+
+/* Sosyal medya linkinden tarif içe aktarma */
+.import-layout { display: grid; gap: 22px; }
+.import-source-card { border-top: 5px solid var(--accent); }
+.supported-platforms { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.supported-platforms span { padding: 7px 11px; border-radius: 999px; color: var(--primary); background: var(--primary-soft); border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--line)); font-size: 12px; font-weight: 780; }
+.url-input-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
+.url-input-row button { min-width: 190px; }
+.import-status { display: flex; align-items: flex-start; gap: 9px; margin-top: 18px; border-radius: 14px; padding: 13px 15px; border: 1px solid var(--line); }
+.import-status strong { flex: 0 0 auto; }
+.import-status span { color: var(--muted); line-height: 1.45; }
+.import-status.info { background: var(--primary-soft); border-color: color-mix(in srgb, var(--primary) 24%, var(--line)); }
+.import-status.loading { background: color-mix(in srgb, var(--accent) 20%, white); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.import-status.success { background: #edf9f3; border-color: #b9e4ce; }
+.import-status.warning { background: #fff8e8; border-color: #f0d69b; }
+.import-status.error { background: #fff0f2; border-color: #efbdc6; }
+.import-preview { border-top: 5px solid var(--primary); }
+.import-media-summary { display: grid; grid-template-columns: 190px minmax(0, 1fr); align-items: center; gap: 20px; margin-top: 22px; padding: 16px; border: 1px solid var(--line); border-radius: 19px; background: var(--surface-soft); }
+.import-preview-image { height: 120px; overflow: hidden; display: grid; place-items: center; border-radius: 15px; color: var(--muted); background: linear-gradient(135deg, var(--primary-soft), color-mix(in srgb, var(--accent) 25%, white)); font-size: 42px; }
+.import-preview-image img { width: 100%; height: 100%; object-fit: cover; }
+.import-media-summary h3 { margin: 10px 0 5px; font-size: 22px; }
+.import-media-summary p { margin: 0; color: var(--muted); }
+.source-badge { position: absolute; left: 12px; top: 12px; z-index: 2; max-width: calc(100% - 76px); padding: 6px 9px; border-radius: 999px; color: white; background: rgba(30, 25, 48, .78); backdrop-filter: blur(8px); font-size: 11px; font-weight: 800; box-shadow: 0 5px 15px rgba(0,0,0,.12); }
+.source-badge.static { position: static; display: inline-flex; max-width: 100%; background: var(--primary); }
+.source-open-button { text-decoration: none; white-space: nowrap; }
+.import-warning { margin-top: 20px; padding: 13px 15px; border-radius: 14px; color: #6d4b00; background: color-mix(in srgb, var(--accent) 20%, white); border: 1px solid color-mix(in srgb, var(--accent) 45%, white); line-height: 1.5; }
+.source-attribution { margin: 22px 0 0; padding: 13px 15px; border-radius: 14px; background: var(--surface-soft); border: 1px solid var(--line); }
+.source-attribution a { color: var(--primary); font-weight: 780; word-break: break-word; }
+.button-loading { opacity: .75; cursor: wait; }
+
+@media (max-width: 820px) {
+  .nav-list { grid-template-columns: repeat(4, 1fr); }
+  .url-input-row { grid-template-columns: 1fr; }
+  .url-input-row button { width: 100%; min-width: 0; }
+  .import-media-summary { grid-template-columns: 1fr; }
+  .import-preview-image { height: 190px; }
+  .source-open-button { width: 100%; margin-top: 12px; }
+}
+
+@media (max-width: 420px) {
+  .nav-button { font-size: 10px; }
+  .nav-button span { font-size: 18px; }
+}
+
+/* v4: alışveriş listesi, gelişmiş ayrıştırma ve tarif oyunu */
+.parser-summary {
+  margin-top: 18px; padding: 13px 15px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary-soft), color-mix(in srgb, var(--accent) 14%, white));
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--line)); color: var(--muted); line-height: 1.5;
+}
+.parser-summary strong { color: var(--text); }
+
+.shopping-layout { display: grid; place-items: start center; }
+.shopping-paper {
+  position: relative; width: min(820px, 100%); overflow: hidden; padding: 34px 34px 30px 76px;
+  border: 1px solid #e8dcb9; border-radius: 16px; box-shadow: 0 24px 65px rgba(91, 69, 28, .14);
+  background:
+    linear-gradient(90deg, transparent 47px, rgba(219, 82, 82, .22) 48px, rgba(219, 82, 82, .22) 50px, transparent 51px),
+    repeating-linear-gradient(0deg, #fffdf4 0, #fffdf4 33px, #dbe8f2 34px, #fffdf4 35px);
+}
+.shopping-paper::before {
+  content: ""; position: absolute; left: 22px; top: 0; bottom: 0; width: 13px;
+  background: radial-gradient(circle, var(--bg) 0 4px, transparent 4.5px) center 12px / 13px 34px repeat-y;
+}
+.shopping-paper-header { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; margin-bottom: 22px; }
+.shopping-paper-header h2 { margin-bottom: 4px; font-size: clamp(28px, 4vw, 42px); font-family: "Bradley Hand", "Segoe Print", cursive; }
+.shopping-paper-header p { color: #71674f; margin-bottom: 0; }
+.shopping-count { flex: 0 0 auto; padding: 8px 11px; border-radius: 999px; color: #6f5718; background: #fff1b8; border: 1px solid #ead486; font-size: 12px; font-weight: 850; }
+.shopping-add-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-bottom: 17px; }
+.shopping-add-row input { background: rgba(255,255,255,.74); }
+.shopping-list { min-height: 180px; display: grid; align-content: start; }
+.shopping-item { min-height: 42px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 11px; border-bottom: 1px solid transparent; }
+.shopping-item input { width: 22px; height: 22px; accent-color: var(--success); }
+.shopping-item label { min-width: 0; word-break: break-word; font-family: "Bradley Hand", "Segoe Print", cursive; font-size: 18px; cursor: pointer; }
+.shopping-item.checked label { color: #8d8779; text-decoration: line-through 2px; }
+.shopping-item .shopping-delete { width: 34px; height: 34px; border: 0; background: transparent; color: var(--danger); border-radius: 50%; font-size: 19px; }
+.shopping-item .shopping-delete:hover { background: rgba(195,63,88,.08); }
+.shopping-empty { padding: 45px 10px; text-align: center; color: #8a816d; font-family: "Bradley Hand", "Segoe Print", cursive; font-size: 20px; }
+.shopping-footer-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+.danger-text { color: var(--danger); }
+
+.ingredient-picker-card { width: min(680px, 100%); }
+.picker-content { padding: 32px; }
+.picker-content > p:not(.eyebrow) { color: var(--muted); }
+.picker-bulk-actions { display: flex; gap: 8px; margin: 12px 0; }
+.ingredient-picker-list { max-height: min(52vh, 500px); overflow: auto; display: grid; gap: 8px; padding: 4px; -webkit-overflow-scrolling: touch; }
+.ingredient-picker-item { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 11px; padding: 12px 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface-soft); }
+.ingredient-picker-item input { width: 21px; height: 21px; accent-color: var(--primary); }
+.ingredient-picker-item span { line-height: 1.4; }
+
+/* Oyun: bağımsız, sıcak ve çizgi-film benzeri bir mutfak estetiği */
+.game-selector { display: grid; gap: 26px; }
+.game-hero-card {
+  position: relative; overflow: hidden; min-height: 260px; padding: clamp(28px, 5vw, 55px); border-radius: var(--radius-xl); color: white;
+  display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(250px, .6fr); align-items: center; gap: 30px;
+  background:
+    radial-gradient(circle at 80% 15%, rgba(255,255,255,.22), transparent 27%),
+    linear-gradient(135deg, #1c785d, #47a66e 56%, #f0a64d);
+  box-shadow: var(--shadow);
+}
+.game-hero-card h2 { max-width: 800px; font-size: clamp(32px, 5vw, 58px); line-height: 1; }
+.game-hero-card p:not(.eyebrow) { max-width: 780px; color: rgba(255,255,255,.82); line-height: 1.6; }
+.game-hero-art { min-height: 190px; position: relative; display: grid; place-items: center; }
+.game-hero-art span { position: absolute; font-size: clamp(70px, 9vw, 120px); filter: drop-shadow(0 18px 14px rgba(0,0,0,.2)); animation: game-float 3.6s ease-in-out infinite; }
+.game-hero-art span:nth-child(1) { left: 0; top: 34px; transform: rotate(-16deg); }
+.game-hero-art span:nth-child(2) { z-index: 2; }
+.game-hero-art span:nth-child(3) { right: 0; bottom: 20px; animation-delay: -.8s; }
+@keyframes game-float { 50% { transform: translateY(-10px) rotate(3deg); } }
+.game-selector-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; }
+.game-selector-heading h2 { margin-bottom: 0; }
+.game-selector-heading input { width: min(340px, 100%); }
+.game-recipe-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.game-recipe-card { overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: var(--surface); box-shadow: var(--shadow-small); }
+.game-recipe-visual { min-height: 155px; display: grid; place-items: center; overflow: hidden; font-size: 72px; background: linear-gradient(135deg, #fff2cc, #d9f4e6); }
+.game-recipe-visual img { width: 100%; height: 170px; object-fit: cover; }
+.game-recipe-body { padding: 17px; }
+.game-recipe-body h3 { margin-bottom: 7px; }
+.game-recipe-body p { min-height: 38px; color: var(--muted); font-size: 13px; }
+.game-recipe-body .primary-button { width: 100%; margin-top: 12px; }
+
+.game-shell { display: grid; gap: 16px; }
+.game-topbar { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(200px, .42fr); align-items: center; gap: 16px; padding: 15px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); box-shadow: var(--shadow-small); }
+.game-topbar-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.recipe-book-button { min-height: 44px; padding: 10px 14px; border: 2px solid #8b5a2b; border-radius: 12px; color: #4a2b12; background: linear-gradient(135deg, #f9e5ad, #d69a4b); box-shadow: inset 0 0 0 2px rgba(255,255,255,.35), 0 5px 0 #8b5a2b; font-weight: 850; }
+.recipe-book-button:active { transform: translateY(3px); box-shadow: inset 0 0 0 2px rgba(255,255,255,.35), 0 2px 0 #8b5a2b; }
+.game-title-wrap { min-width: 0; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.game-title-wrap > span { font-size: 36px; }
+.game-title-wrap small, .game-title-wrap strong { display: block; }
+.game-title-wrap small { color: var(--muted); font-size: 11px; }
+.game-title-wrap strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.game-progress-wrap { display: grid; gap: 5px; }
+.game-progress-wrap > span { font-size: 11px; color: var(--muted); font-weight: 800; text-align: right; }
+.game-progress { height: 9px; overflow: hidden; border-radius: 999px; background: var(--primary-soft); }
+.game-progress i { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width .35s ease; }
+.game-message { border-radius: 14px; padding: 13px 16px; border: 1px solid var(--line); font-weight: 680; }
+.game-message.info { background: var(--primary-soft); }
+.game-message.success { color: #176b48; background: #e5f8ed; border-color: #9ed8b8; }
+.game-message.warning { color: #755000; background: #fff4d2; border-color: #ebcf78; }
+.game-message.error { color: #942c44; background: #fff0f3; border-color: #e9aebc; }
+
+.pantry-view { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; align-items: start; }
+.pantry-shelves { display: grid; gap: 16px; }
+.pantry-shelf { position: relative; padding: 17px 16px 23px; border-radius: 18px; border: 1px solid #c79561; background: linear-gradient(#efd0a2, #d99e66); box-shadow: inset 0 -10px 0 rgba(101,58,24,.18), var(--shadow-small); }
+.pantry-shelf::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: 8px; height: 8px; border-radius: 4px; background: #8b552e; }
+.pantry-shelf h3 { margin-bottom: 12px; color: #533015; font-size: 16px; }
+.shelf-items { display: flex; flex-wrap: wrap; gap: 9px; }
+.pantry-item { min-width: 92px; max-width: 155px; display: grid; justify-items: center; gap: 5px; padding: 9px 10px; border: 2px solid transparent; border-radius: 14px; background: rgba(255,255,255,.76); box-shadow: 0 7px 12px rgba(84,45,18,.12); transition: transform .14s ease, border-color .14s ease; }
+.pantry-item:hover { transform: translateY(-3px); }
+.pantry-item.selected { border-color: var(--primary); background: white; transform: translateY(-5px) rotate(-1deg); }
+.pantry-item span { font-size: 32px; }
+.pantry-item b { width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #49301e; font-size: 11px; }
+.game-table-panel { position: sticky; top: 18px; display: grid; gap: 12px; }
+.wood-table { min-height: 300px; padding: 22px; border-radius: 22px; color: #3d2517; background:
+  linear-gradient(90deg, rgba(71,38,17,.09) 1px, transparent 1px) 0 0 / 44px 100%,
+  linear-gradient(#d99a5c, #b8753e); border: 5px solid #8b5129; box-shadow: inset 0 0 0 2px rgba(255,255,255,.16), var(--shadow); }
+.selected-ingredient-tray { display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; margin-top: 13px; }
+.selected-ingredient-chip { padding: 7px 9px; border-radius: 999px; background: #fff9ea; border: 1px solid #dbbd79; font-size: 12px; }
+
+.kitchen-view { display: grid; grid-template-columns: minmax(0,1fr) 290px; gap: 18px; align-items: start; }
+.kitchen-scene { position: relative; overflow: hidden; min-height: 700px; border-radius: 28px; border: 5px solid #80512e; background: linear-gradient(#d9f3ee 0 36%, #f1c284 36% 40%, #b36f3b 40%); box-shadow: var(--shadow); }
+.kitchen-wall { position: relative; height: 180px; background:
+  linear-gradient(90deg, rgba(53,118,108,.08) 1px, transparent 1px) 0 0/45px 45px,
+  linear-gradient(rgba(53,118,108,.08) 1px, transparent 1px) 0 0/45px 45px,
+  #d9f3ee; border-bottom: 12px solid #a86c3b; }
+.window-glow { position: absolute; left: 40px; top: 28px; width: 150px; height: 100px; border: 9px solid #6e9c91; border-radius: 10px; background: linear-gradient(#9ddcff, #fff6c8); box-shadow: inset 0 0 0 4px rgba(255,255,255,.7); }
+.hanging-pan { position: absolute; right: 70px; top: 42px; font-size: 76px; transform: rotate(-10deg); filter: drop-shadow(0 8px 7px rgba(0,0,0,.15)); }
+.kitchen-stations { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; padding: 18px; }
+.kitchen-station { min-height: 135px; border: 3px solid rgba(84,49,22,.22); border-radius: 19px; padding: 12px; display: grid; justify-items: center; align-content: center; gap: 4px; color: #3d2819; background: linear-gradient(#fff9e9, #f0d39c); box-shadow: 0 9px 0 rgba(104,58,25,.18), 0 14px 22px rgba(77,43,21,.13); transition: transform .15s ease; }
+.kitchen-station:hover { transform: translateY(-4px); }
+.kitchen-station:active { transform: translateY(4px); box-shadow: 0 3px 0 rgba(104,58,25,.2); }
+.kitchen-station > span { font-size: 42px; }
+.kitchen-station b { font-size: 13px; }
+.kitchen-station small { color: #795c43; font-size: 10px; }
+.kitchen-station.recommended { border-color: var(--primary); outline: 5px solid color-mix(in srgb, var(--primary) 23%, transparent); transform: translateY(-5px); animation: recommended-station 1.15s ease-in-out infinite; }
+.kitchen-station.recommended::after { content: "SIRADAKİ GÖREV"; margin-top: 4px; padding: 3px 7px; border-radius: 999px; color: white; background: var(--primary); font-size: 8px; font-weight: 900; letter-spacing: .07em; }
+@keyframes recommended-station { 50% { box-shadow: 0 9px 0 rgba(104,58,25,.18), 0 0 0 8px color-mix(in srgb, var(--primary) 12%, transparent), 0 14px 25px rgba(77,43,21,.18); } }
+.kitchen-counter { display: grid; grid-template-columns: minmax(0,1fr) minmax(260px,.55fr); gap: 16px; padding: 20px; border-top: 9px solid #74431f; background: linear-gradient(#d8995e, #b56c37); }
+.game-table-ingredients { min-height: 96px; display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
+.game-table-ingredient { display: inline-flex; align-items: center; gap: 5px; padding: 7px 9px; border-radius: 11px; background: #fff9e8; border: 1px solid #e0bd79; font-size: 12px; }
+.step-card { padding: 18px; border-radius: 18px; background: #fffdf6; border: 2px solid #e0bd79; box-shadow: 0 8px 16px rgba(82,45,18,.15); }
+.step-card small { color: var(--primary); font-weight: 850; }
+.step-card h3 { margin: 7px 0 8px; line-height: 1.35; }
+.step-card p { margin-bottom: 0; color: var(--muted); font-size: 12px; }
+.step-card .game-step-hint { margin-top: 11px; padding: 10px 12px; border-radius: 12px; color: #4a341d; background: #fff1bf; border: 1px solid #dfbd57; font-size: 12px; line-height: 1.5; }
+.step-card .game-step-hint strong { color: #7b4b00; }
+
+.recipe-book-modal-card { width: min(1040px, 100%); overflow: auto; padding: 18px; border: 9px solid #6f431f; background: #9a602e; box-shadow: 0 35px 100px rgba(0,0,0,.45); }
+.recipe-book-open { position: relative; display: grid; grid-template-columns: 1fr 1fr; min-height: 580px; overflow: hidden; border-radius: 12px; background: #fff7dd; box-shadow: inset 0 0 35px rgba(100,65,30,.16); }
+.recipe-book-open::before { content: ""; position: absolute; z-index: 3; left: 50%; top: 0; bottom: 0; width: 20px; transform: translateX(-50%); background: linear-gradient(90deg, rgba(66,39,17,.18), rgba(255,255,255,.7), rgba(66,39,17,.18)); pointer-events: none; }
+.recipe-book-page { padding: clamp(28px, 4vw, 48px); color: #3d2b1c; background: repeating-linear-gradient(#fffaf0 0 31px, #eadfca 32px); }
+.recipe-book-page:first-child { border-right: 1px solid #d5c09d; }
+.recipe-book-page h2 { margin-bottom: 5px; font-family: Georgia, serif; font-size: clamp(28px, 4vw, 48px); color: #5b3518; }
+.recipe-book-page h3 { margin: 24px 0 10px; color: #7b461c; font-family: Georgia, serif; }
+.recipe-book-page p, .recipe-book-page li { line-height: 1.65; }
+.recipe-book-page ul, .recipe-book-page ol { padding-left: 22px; }
+.recipe-book-page li { margin-bottom: 8px; }
+.recipe-book-page li.current-book-step { padding: 8px 10px; border-radius: 10px; background: #fff0a9; outline: 2px solid #d9a52a; font-weight: 750; }
+.recipe-book-meta { display: flex; flex-wrap: wrap; gap: 7px; margin: 14px 0; }
+.recipe-book-meta span { padding: 5px 8px; border: 1px solid #d8bc8b; border-radius: 999px; background: rgba(255,255,255,.65); font-size: 11px; }
+.recipe-book-note { padding: 10px 12px; border-left: 4px solid #b77832; background: rgba(255,240,193,.75); font-size: 12px; }
+.game-log-panel { position: sticky; top: 18px; padding: 18px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow-small); }
+.game-action-log { max-height: 470px; overflow: auto; display: grid; gap: 8px; margin: 12px 0; }
+.game-log-item { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 8px; padding: 9px; border-radius: 11px; background: var(--surface-soft); font-size: 12px; line-height: 1.45; }
+.game-log-item.ok { border-left: 4px solid var(--success); }
+.game-log-item.bad { border-left: 4px solid var(--danger); }
+
+.game-animation-stage { position: absolute; z-index: 12; inset: 0; pointer-events: none; display: grid; place-items: center; opacity: 0; }
+.game-animation-stage.playing { opacity: 1; background: rgba(255,255,255,.28); backdrop-filter: blur(2px); }
+.action-animation { display: grid; justify-items: center; gap: 8px; padding: 24px 36px; border-radius: 22px; background: rgba(255,255,255,.94); box-shadow: 0 25px 60px rgba(45,27,15,.28); animation: action-pop .85s ease both; }
+.action-animation span { font-size: 90px; }
+.action-animation b { font-size: 20px; }
+.action-animation.crack span { animation: egg-crack .8s ease; }
+.action-animation.pour span { animation: pour .8s ease; transform-origin: 65% 80%; }
+.action-animation.cut span { animation: cut-shake .25s ease 3; }
+.action-animation.mix span { animation: stir .7s linear; }
+.action-animation.stove span, .action-animation.oven span { animation: heat-pulse .45s ease infinite alternate; }
+@keyframes action-pop { from { transform: scale(.72); opacity: 0; } 35% { transform: scale(1.08); opacity: 1; } to { transform: scale(1); } }
+@keyframes egg-crack { 35% { transform: rotate(-15deg) scale(1.1); } 65% { transform: rotate(18deg) translateY(8px); } }
+@keyframes pour { 55% { transform: rotate(-55deg) translateY(7px); } }
+@keyframes cut-shake { 50% { transform: translateX(7px) rotate(4deg); } }
+@keyframes stir { to { transform: rotate(360deg); } }
+@keyframes heat-pulse { to { transform: scale(1.14); filter: drop-shadow(0 0 14px #ff9a3d); } }
+
+.cutting-minigame { position: fixed; z-index: 150; inset: 0; display: grid; place-items: center; padding: 16px; background: rgba(31,22,15,.75); backdrop-filter: blur(6px); }
+.cutting-card { width: min(680px, 100%); max-height: calc(100dvh - 32px); overflow: auto; padding: 26px; border-radius: 24px; background: #fffaf0; box-shadow: 0 35px 90px rgba(0,0,0,.35); }
+.cut-techniques { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.cut-technique { padding: 9px 12px; border: 1px solid #d6bd91; border-radius: 999px; background: #fff; font-weight: 760; }
+.cut-technique.active { color: white; background: var(--primary); border-color: var(--primary); }
+.cutting-board { position: relative; min-height: 330px; overflow: hidden; margin: 18px 0 10px; border: 10px solid #8b552e; border-radius: 28px; background:
+  linear-gradient(90deg, rgba(123,75,37,.10) 1px, transparent 1px) 0 0/42px 100%,
+  #dca86c; box-shadow: inset 0 0 0 4px rgba(255,255,255,.18); }
+.cut-food { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); font-size: 150px; filter: drop-shadow(0 16px 10px rgba(75,39,16,.2)); transition: transform .3s ease, filter .3s ease; }
+.cut-food.chopped { transform: translate(-50%,-50%) scale(.83) rotate(4deg); filter: drop-shadow(0 5px 3px rgba(75,39,16,.2)); }
+.cut-guides { position: absolute; inset: 18%; }
+.cut-guide { position: absolute; border: 0; background: transparent; padding: 0; }
+.cut-guide::before { content: ""; position: absolute; inset: 0; border: 3px dashed rgba(124,31,31,.78); border-radius: 999px; }
+.cut-guide.done::before { border-color: rgba(37,134,93,.9); border-style: solid; box-shadow: 0 0 0 4px rgba(37,134,93,.12); }
+.cutting-board[data-technique="slice"] .cut-guide,
+.cutting-board[data-technique="julienne"] .cut-guide { top: 0; bottom: 0; width: 24px; }
+.cutting-board[data-technique="dice"] .cut-guide:nth-child(-n+3) { top: 0; bottom: 0; width: 24px; }
+.cutting-board[data-technique="dice"] .cut-guide:nth-child(n+4) { left: 0; right: 0; height: 24px; }
+.cutting-board[data-technique="mince"] .cut-guide { left: 5%; right: 5%; height: 26px; transform: rotate(var(--rot, 0deg)); }
+.cutting-board[data-technique="chop"] .cut-guide { left: 8%; right: 8%; height: 28px; }
+.cut-progress-text { text-align: center; color: #725131; }
+
+.game-result { min-height: 480px; display: grid; place-items: center; padding: 30px; border-radius: 28px; text-align: center; box-shadow: var(--shadow); }
+.game-result.success { color: #145c3d; background: radial-gradient(circle at 50% 10%, #f5fff9, #d9f5e5); border: 3px solid #6bc596; }
+.game-result.failure { color: #80253a; background: radial-gradient(circle at 50% 10%, #fff8fa, #ffe0e7); border: 3px solid #dc8298; }
+.game-result-card { max-width: 720px; }
+.game-result-icon { font-size: 100px; animation: result-bounce .8s ease; }
+.game-result h2 { font-size: clamp(36px, 6vw, 64px); }
+.game-result ul { max-width: 620px; margin: 20px auto; text-align: left; line-height: 1.65; }
+@keyframes result-bounce { 50% { transform: scale(1.22) rotate(8deg); } }
+
+@media (max-width: 1180px) {
+  .game-recipe-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .kitchen-stations { grid-template-columns: repeat(3, minmax(0,1fr)); }
+}
+
+@media (max-width: 820px) {
+  .nav-list { grid-template-columns: repeat(6, minmax(68px, 1fr)); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+  .nav-list::-webkit-scrollbar { display: none; }
+  .nav-button { min-width: 68px; }
+  .shopping-paper { padding: 26px 18px 24px 56px; }
+  .shopping-paper-header { display: block; }
+  .shopping-count { display: inline-flex; margin-top: 12px; }
+  .picker-content { padding: 28px 20px; }
+  .game-hero-card { grid-template-columns: 1fr; }
+  .game-hero-art { display: none; }
+  .game-selector-heading { display: grid; align-items: start; }
+  .game-selector-heading input { width: 100%; }
+  .game-topbar { grid-template-columns: 1fr; text-align: center; }
+  .game-topbar-actions { justify-content: center; }
+  .recipe-book-open { grid-template-columns: 1fr; max-height: calc(100dvh - 70px); overflow: auto; }
+  .recipe-book-open::before { display: none; }
+  .recipe-book-page:first-child { border-right: 0; border-bottom: 8px double #d5c09d; }
+  .game-progress-wrap > span { text-align: center; }
+  .pantry-view, .kitchen-view { grid-template-columns: 1fr; }
+  .game-table-panel, .game-log-panel { position: static; }
+  .kitchen-scene { min-height: 0; }
+  .kitchen-stations { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .kitchen-counter { grid-template-columns: 1fr; }
+  .game-log-panel { order: -1; }
+  .game-action-log { max-height: 220px; }
+}
+
+@media (max-width: 560px) {
+  .shopping-add-row { grid-template-columns: 1fr; }
+  .shopping-footer-actions { display: grid; grid-template-columns: 1fr; }
+  .game-recipe-grid { grid-template-columns: 1fr; }
+  .game-hero-card { padding: 28px 21px; }
+  .game-hero-card h2 { font-size: 38px; }
+  .pantry-shelf { padding-inline: 12px; }
+  .pantry-item { min-width: 84px; flex: 1 1 84px; }
+  .kitchen-stations { gap: 8px; padding: 10px; }
+  .kitchen-station { min-height: 118px; padding: 8px; }
+  .kitchen-station > span { font-size: 35px; }
+  .kitchen-counter { padding: 13px; }
+  .cutting-card { padding: 20px 14px; }
+  .cutting-board { min-height: 300px; }
+  .cut-food { font-size: 125px; }
+}
+
+/* v4 küçük ekran ve yerel checkbox düzeltmeleri */
+.shopping-item input[type="checkbox"], .ingredient-picker-item input[type="checkbox"] {
+  appearance: auto; -webkit-appearance: checkbox; min-height: 0; padding: 0; margin: 0; border: 0; box-shadow: none; background: transparent;
+}
+@media (max-width: 820px) {
+  .nav-list { grid-template-columns: repeat(6, minmax(0, 1fr)); overflow: visible; }
+  .nav-button { min-width: 0; font-size: 9px; padding-inline: 2px; }
+  .nav-button b { line-height: 1.05; }
+}
+@media (max-width: 420px) {
+  .nav-button { font-size: 8.5px; }
+  .nav-button span { font-size: 17px; }
+}
+
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Ana menü">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">🍲</div>
+        <div>
+          <strong>Lezzet Defteri</strong>
+          <span>Kişisel tarif arşivin</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-button active" type="button" data-page="home"><span>⌂</span><b>Ana sayfa</b></button>
+        <button class="nav-button" type="button" data-page="recipes"><span>☷</span><b>Tarifler</b></button>
+        <button class="nav-button" type="button" data-page="editor"><span>＋</span><b>Yeni tarif</b></button>
+        <button class="nav-button" type="button" data-page="socialImport"><span>↗</span><b>Linkten ekle</b></button>
+        <button class="nav-button" type="button" data-page="shopping"><span>☑</span><b>Alışveriş</b></button>
+        <button class="nav-button" type="button" data-page="game"><span>🎮</span><b>Tarifi oyna</b></button>
+      </nav>
+
+      <div class="sidebar-actions">
+        <button id="themeButton" class="secondary-button full-width" type="button">🎨 Renkleri özelleştir</button>
+        <button id="exportButton" class="secondary-button full-width" type="button">Verileri dışa aktar</button>
+        <label class="secondary-button full-width file-label">
+          Verileri içe aktar
+          <input id="importInput" type="file" accept="application/json,.json" hidden>
+        </label>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Kişisel yemek planlayıcısı</p>
+          <h1 id="pageTitle">Ana sayfa</h1>
+        </div>
+        <div class="topbar-actions">
+          <button id="mobileThemeButton" class="icon-circle mobile-only" type="button" aria-label="Renkleri özelleştir">🎨</button>
+          <button class="primary-button mobile-add" type="button" data-page="editor">＋ Tarif ekle</button>
+        </div>
+      </header>
+
+      <section id="homePage" class="page active" aria-labelledby="pageTitle">
+        <article id="randomSpotlight" class="random-spotlight">
+          <div class="spotlight-media" id="spotlightMedia" aria-hidden="true"><span>🎲</span></div>
+          <div class="spotlight-content">
+            <p class="eyebrow light">Bugün ne yesem?</p>
+            <h2 id="spotlightTitle">Tek dokunuşla bir tarif seç</h2>
+            <p id="spotlightDescription">Defterindeki tariflerden rastgele, tek ve belirgin bir öneri getir.</p>
+            <div id="spotlightMeta" class="spotlight-meta hidden"></div>
+            <div class="spotlight-actions">
+              <button id="randomRecipeButton" class="accent-button" type="button">🎲 Rastgele tarif seç</button>
+              <button id="openRandomButton" class="glass-button hidden" type="button">Tarifi aç</button>
+            </div>
+          </div>
+        </article>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <section class="content-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Alışkanlıklarına göre</p>
+              <h2>Sık yediklerin</h2>
+            </div>
+            <button class="text-button" type="button" data-page="recipes">Tüm tarifleri gör →</button>
+          </div>
+          <div id="frequentRecipes" class="recipe-grid"></div>
+        </section>
+
+        <section class="content-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Hızlı erişim</p>
+              <h2>Favorilerin</h2>
+            </div>
+          </div>
+          <div id="favoriteRecipes" class="recipe-grid"></div>
+        </section>
+      </section>
+
+      <section id="recipesPage" class="page" aria-labelledby="pageTitle">
+        <div class="filter-panel">
+          <div class="search-field">
+            <label for="searchInput">Kelimeyle ara</label>
+            <input id="searchInput" type="search" inputmode="search" autocomplete="off" placeholder="Tarif, malzeme veya etiket ara…">
+          </div>
+
+          <div class="filter-grid">
+            <div class="filter-field">
+              <label for="cultureFilter">Kültür</label>
+              <select id="cultureFilter"><option value="">Tümü</option></select>
+            </div>
+            <div class="filter-field">
+              <label for="mealFilter">Öğün</label>
+              <select id="mealFilter"><option value="">Tümü</option></select>
+            </div>
+            <div class="filter-field">
+              <label for="ingredientFilter">Malzeme etiketi</label>
+              <select id="ingredientFilter"><option value="">Tümü</option></select>
+            </div>
+            <div class="filter-field">
+              <label for="favoriteFilter">Durum</label>
+              <select id="favoriteFilter">
+                <option value="">Tümü</option>
+                <option value="favorite">Yalnızca favoriler</option>
+                <option value="frequent">Sık yenilenler</option>
+              </select>
+            </div>
+            <div class="filter-field">
+              <label for="sortFilter">Sıralama</label>
+              <select id="sortFilter">
+                <option value="newest">En yeni</option>
+                <option value="name">Ada göre</option>
+                <option value="time">En kısa süre</option>
+                <option value="eaten">En sık yenilen</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="filter-footer">
+            <span id="resultCount">0 tarif</span>
+            <button id="clearFiltersButton" class="text-button" type="button">Filtreleri temizle</button>
+          </div>
+        </div>
+
+        <div id="activeFilterChips" class="active-filter-chips"></div>
+        <div id="recipeList" class="recipe-grid"></div>
+      </section>
+
+      <section id="editorPage" class="page" aria-labelledby="pageTitle">
+        <form id="recipeForm" class="editor-card" novalidate>
+          <div class="form-header">
+            <div>
+              <p class="eyebrow">Uygulama içinden kayıt</p>
+              <h2 id="formTitle">Yeni tarif ekle</h2>
+              <p class="form-subtitle">Buraya yazdığınız bilgiler cihazınızdaki tarif veritabanına kaydedilir; kod dosyasını değiştirmeniz gerekmez.</p>
+            </div>
+            <button type="button" id="cancelEditButton" class="secondary-button hidden">Düzenlemeyi iptal et</button>
+          </div>
+
+          <input id="recipeId" type="hidden">
+
+          <div class="form-grid two-column">
+            <div class="form-field span-2">
+              <label for="titleInput">Tarif adı *</label>
+              <input id="titleInput" required maxlength="80" autocomplete="off" placeholder="Örn. Tavuklu Ramen">
+              <span class="field-error" data-error-for="titleInput"></span>
+            </div>
+
+            <div class="form-field span-2 photo-field">
+              <label>Tarif fotoğrafı</label>
+              <div class="photo-editor">
+                <div id="photoPreview" class="photo-preview"><span>📷</span><small>Fotoğraf eklenmedi</small></div>
+                <div class="photo-actions">
+                  <label class="primary-button file-label compact">
+                    Fotoğraf seç
+                    <input id="photoInput" type="file" accept="image/*" hidden>
+                  </label>
+                  <button id="removePhotoButton" class="secondary-button" type="button">Fotoğrafı kaldır</button>
+                  <small>JPG, PNG, WebP veya iPhone fotoğrafı. Görsel otomatik küçültülür.</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label for="cultureInput">Mutfak / kültür *</label>
+              <input id="cultureInput" required list="cultureOptions" autocomplete="off" placeholder="Örn. Japon">
+              <datalist id="cultureOptions">
+                <option value="Türk"><option value="Japon"><option value="Kore"><option value="İtalyan">
+                <option value="Meksika"><option value="Hint"><option value="Akdeniz"><option value="Amerikan">
+                <option value="Fransız"><option value="Çin"><option value="Tayland"><option value="Orta Doğu">
+              </datalist>
+              <span class="field-error" data-error-for="cultureInput"></span>
+            </div>
+
+            <div class="form-field">
+              <label for="mealInput">Öğün *</label>
+              <select id="mealInput" required>
+                <option value="">Seçiniz</option>
+                <option>Kahvaltı</option><option>Öğle yemeği</option><option>Akşam yemeği</option>
+                <option>Atıştırmalık</option><option>Tatlı</option><option>İçecek</option><option>Çorba</option>
+              </select>
+              <span class="field-error" data-error-for="mealInput"></span>
+            </div>
+
+            <div class="form-field">
+              <label for="prepTimeInput">Hazırlık süresi (dk)</label>
+              <input id="prepTimeInput" type="number" inputmode="numeric" min="0" max="1440" value="10">
+            </div>
+            <div class="form-field">
+              <label for="cookTimeInput">Pişirme süresi (dk)</label>
+              <input id="cookTimeInput" type="number" inputmode="numeric" min="0" max="1440" value="20">
+            </div>
+            <div class="form-field">
+              <label for="servingsInput">Porsiyon</label>
+              <input id="servingsInput" type="number" inputmode="numeric" min="1" max="100" value="2">
+            </div>
+            <div class="form-field">
+              <label for="difficultyInput">Zorluk</label>
+              <select id="difficultyInput"><option>Kolay</option><option>Orta</option><option>Zor</option></select>
+            </div>
+
+            <div class="form-field span-2">
+              <label for="descriptionInput">Kısa açıklama</label>
+              <textarea id="descriptionInput" rows="3" maxlength="260" placeholder="Tarifi kısaca anlatın"></textarea>
+            </div>
+
+            <div class="form-field span-2">
+              <label for="ingredientTagsInput">Malzeme etiketleri *</label>
+              <input id="ingredientTagsInput" required autocomplete="off" placeholder="tavuk, makarna, balık, sebze…">
+              <small>Virgülle ayırın. Arama ve filtreleme bu etiketleri kullanır.</small>
+              <div id="suggestedTagButtons" class="suggested-tags"></div>
+              <span class="field-error" data-error-for="ingredientTagsInput"></span>
+            </div>
+
+            <div class="form-field span-2">
+              <label for="extraTagsInput">Diğer etiketler</label>
+              <input id="extraTagsInput" autocomplete="off" placeholder="hızlı, ekonomik, yüksek protein, acılı…">
+            </div>
+
+            <div class="form-field">
+              <label for="ingredientsInput">Malzemeler *</label>
+              <textarea id="ingredientsInput" required rows="11" placeholder="Her satıra bir malzeme yazın&#10;200 g tavuk&#10;1 paket noodle&#10;2 yemek kaşığı soya sosu"></textarea>
+              <span class="field-error" data-error-for="ingredientsInput"></span>
+            </div>
+            <div class="form-field">
+              <label for="stepsInput">Hazırlanışı *</label>
+              <textarea id="stepsInput" required rows="11" placeholder="Her satıra bir adım yazın&#10;Tavuğu doğrayın.&#10;Sebzeleri soteleyin.&#10;Noodle ile birleştirin."></textarea>
+              <span class="field-error" data-error-for="stepsInput"></span>
+            </div>
+          </div>
+
+          <div class="form-actions sticky-form-actions">
+            <button type="button" id="clearFormButton" class="secondary-button">Formu temizle</button>
+            <button type="submit" class="primary-button">Tarifi kaydet</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="socialImportPage" class="page" aria-labelledby="pageTitle">
+        <div class="import-layout">
+          <form id="socialImportForm" class="editor-card import-source-card" novalidate>
+            <div class="form-header">
+              <div>
+                <p class="eyebrow">Sosyal medyadan içe aktarma</p>
+                <h2>Linkten tarif oluştur</h2>
+                <p class="form-subtitle">Instagram, YouTube ve diğer herkese açık sayfalardan başlık, açıklama ve görsel alınır. Çıkarılan tarif kaydedilmeden önce düzenlenebilir.</p>
+              </div>
+            </div>
+
+            <div class="supported-platforms" aria-label="Desteklenen platformlar">
+              <span>◎ Instagram</span><span>▶ YouTube</span><span>◉ Web bağlantısı</span>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="importUrlInput">Gönderi veya video bağlantısı *</label>
+                <div class="url-input-row">
+                  <input id="importUrlInput" type="url" inputmode="url" autocomplete="url" placeholder="https://www.instagram.com/reel/... veya https://youtu.be/..." required>
+                  <button id="analyzeImportButton" class="primary-button" type="submit">Bağlantıyı analiz et</button>
+                </div>
+                <small>Yalnızca herkese açık içerikler alınabilir. Özel veya silinmiş gönderiler açılamaz.</small>
+              </div>
+
+              <div class="form-field">
+                <label for="importSourceTextInput">Gönderi / video açıklaması</label>
+                <textarea id="importSourceTextInput" rows="8" placeholder="Açıklama otomatik alınamazsa buraya yapıştırın. Malzemeler ve hazırlanış adımları bu metinden ayrıştırılır."></textarea>
+                <small>Instagram veya YouTube açıklaması otomatik gelmezse metni buraya yapıştırıp tekrar analiz edin.</small>
+              </div>
+            </div>
+
+            <div id="importStatus" class="import-status info" role="status" aria-live="polite">
+              <strong>Hazır</strong>
+              <span>Bir bağlantı ekleyerek başlayın.</span>
+            </div>
+
+            <div class="form-actions">
+              <button id="clearImportButton" class="secondary-button" type="button">Alanları temizle</button>
+            </div>
+          </form>
+
+          <section id="importPreview" class="editor-card import-preview hidden" aria-label="İçe aktarılan tarif önizlemesi">
+            <div class="form-header">
+              <div>
+                <p class="eyebrow">Kaydetmeden önce kontrol</p>
+                <h2>Tarif önizlemesi</h2>
+                <p class="form-subtitle">Eksik veya yanlış alanları düzenleyin. Kaydedilen tarif, diğer tariflerle aynı listeye eklenir.</p>
+              </div>
+              <a id="importSourceLink" class="secondary-button source-open-button" href="#" target="_blank" rel="noopener noreferrer">Kaynağı aç ↗</a>
+            </div>
+
+            <div id="importParserSummary" class="parser-summary hidden" aria-live="polite"></div>
+
+            <div class="import-media-summary">
+              <div id="importPreviewImage" class="import-preview-image"><span>🔗</span></div>
+              <div>
+                <span id="importSourceBadge" class="source-badge static">Web</span>
+                <h3 id="importSourceTitle">Kaynak başlığı</h3>
+                <p id="importCreatorText">Kaynak bilgisi</p>
+              </div>
+            </div>
+
+            <div class="form-grid two-column">
+              <div class="form-field span-2">
+                <label for="importTitleInput">Tarif adı *</label>
+                <input id="importTitleInput" maxlength="80" autocomplete="off">
+              </div>
+              <div class="form-field">
+                <label for="importCultureInput">Mutfak / kültür *</label>
+                <input id="importCultureInput" list="cultureOptions" autocomplete="off">
+              </div>
+              <div class="form-field">
+                <label for="importMealInput">Öğün *</label>
+                <select id="importMealInput">
+                  <option value="">Seçiniz</option><option>Kahvaltı</option><option>Öğle yemeği</option><option>Akşam yemeği</option>
+                  <option>Atıştırmalık</option><option>Tatlı</option><option>İçecek</option><option>Çorba</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="importPrepTimeInput">Hazırlık süresi (dk)</label>
+                <input id="importPrepTimeInput" type="number" inputmode="numeric" min="0" max="1440">
+              </div>
+              <div class="form-field">
+                <label for="importCookTimeInput">Pişirme süresi (dk)</label>
+                <input id="importCookTimeInput" type="number" inputmode="numeric" min="0" max="1440">
+              </div>
+              <div class="form-field">
+                <label for="importServingsInput">Porsiyon</label>
+                <input id="importServingsInput" type="number" inputmode="numeric" min="1" max="100">
+              </div>
+              <div class="form-field">
+                <label for="importDifficultyInput">Zorluk</label>
+                <select id="importDifficultyInput"><option>Kolay</option><option>Orta</option><option>Zor</option></select>
+              </div>
+              <div class="form-field span-2">
+                <label for="importDescriptionInput">Kısa açıklama</label>
+                <textarea id="importDescriptionInput" rows="3" maxlength="260"></textarea>
+              </div>
+              <div class="form-field span-2">
+                <label for="importIngredientTagsInput">Malzeme etiketleri *</label>
+                <input id="importIngredientTagsInput" placeholder="tavuk, makarna, domates…">
+              </div>
+              <div class="form-field span-2">
+                <label for="importExtraTagsInput">Diğer etiketler</label>
+                <input id="importExtraTagsInput" placeholder="sosyal medya, hızlı, ekonomik…">
+              </div>
+              <div class="form-field">
+                <label for="importIngredientsInput">Malzemeler *</label>
+                <textarea id="importIngredientsInput" rows="12" placeholder="Her satıra bir malzeme"></textarea>
+              </div>
+              <div class="form-field">
+                <label for="importStepsInput">Hazırlanışı *</label>
+                <textarea id="importStepsInput" rows="12" placeholder="Her satıra bir adım"></textarea>
+              </div>
+            </div>
+
+            <div class="import-warning">
+              <strong>Kontrol gerekli:</strong> Sosyal medya açıklamalarında miktar, süre veya adımlar eksik olabilir. Kaydetmeden önce alanları doğrulayın.
+            </div>
+
+            <div class="form-actions">
+              <button id="reanalyzeImportButton" class="secondary-button" type="button">Metni yeniden ayrıştır</button>
+              <button id="saveImportedRecipeButton" class="primary-button" type="button">Tarifi listeye kaydet</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="shoppingPage" class="page" aria-labelledby="pageTitle">
+        <div class="shopping-layout">
+          <section class="shopping-paper" aria-label="Alışveriş listesi">
+            <div class="shopping-paper-header">
+              <div>
+                <p class="eyebrow">Not kağıdı</p>
+                <h2>Alışveriş listesi</h2>
+                <p>Malzemeleri tek tek ekleyin veya bir tarifin içinden seçerek aktarın.</p>
+              </div>
+              <span id="shoppingCountBadge" class="shopping-count">0 madde</span>
+            </div>
+            <form id="shoppingForm" class="shopping-add-row">
+              <input id="shoppingInput" autocomplete="off" maxlength="120" placeholder="Örn. 1 litre süt">
+              <button class="primary-button" type="submit">＋ Ekle</button>
+            </form>
+            <div id="shoppingList" class="shopping-list"></div>
+            <div class="shopping-footer-actions">
+              <button id="clearCheckedShoppingButton" class="secondary-button" type="button">Tiklenenleri temizle</button>
+              <button id="clearShoppingButton" class="text-button danger-text" type="button">Tüm listeyi sil</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="gamePage" class="page" aria-labelledby="pageTitle">
+        <div id="gameSelector" class="game-selector">
+          <section class="game-hero-card">
+            <div>
+              <p class="eyebrow light">Point-and-click mutfak oyunu</p>
+              <h2>Bir tarif seç, malzemeleri bul ve doğru sırayla pişir.</h2>
+              <p>Tarifte geçen ürünleri kendi raflarından masaya al; görev kartındaki yönlendirmeyle doğrama, karıştırma, ocak, fırın ve bekleme aşamalarını tamamla. Tarif kitabını dilediğin an açabilirsin.</p>
+            </div>
+            <div class="game-hero-art" aria-hidden="true"><span>🥕</span><span>🍳</span><span>🥛</span></div>
+          </section>
+          <div class="game-selector-heading">
+            <div><p class="eyebrow">Oyun tarifleri</p><h2>Tarif seç</h2></div>
+            <input id="gameSearchInput" type="search" inputmode="search" placeholder="Oynanacak tarif ara…">
+          </div>
+          <div id="gameRecipeList" class="game-recipe-grid"></div>
+        </div>
+
+        <section id="gameShell" class="game-shell hidden" aria-live="polite">
+          <header class="game-topbar">
+            <div class="game-topbar-actions">
+              <button id="exitGameButton" class="secondary-button" type="button">← Tarif seçimine dön</button>
+              <button id="openGameRecipeBookButton" class="recipe-book-button" type="button" aria-haspopup="dialog">📖 Tarif kitabı</button>
+            </div>
+            <div class="game-title-wrap"><span id="gameRecipeEmoji">🍽️</span><div><small>Oynanan tarif</small><strong id="gameRecipeTitle">Tarif</strong></div></div>
+            <div class="game-progress-wrap"><span id="gameProgressText">Hazırlık</span><div class="game-progress"><i id="gameProgressBar"></i></div></div>
+          </header>
+
+          <div id="gameMessage" class="game-message info">Raflardan tarif için gereken malzemeleri seçin.</div>
+
+          <div id="pantryView" class="pantry-view">
+            <div id="pantryShelves" class="pantry-shelves"></div>
+            <aside class="game-table-panel">
+              <div class="wood-table">
+                <div><p class="eyebrow">Hazırlık masası</p><h3>Seçtiklerin</h3></div>
+                <div id="selectedIngredientTray" class="selected-ingredient-tray"></div>
+              </div>
+              <button id="confirmPantryButton" class="accent-button full-width" type="button">Malzemeleri masaya koy</button>
+            </aside>
+          </div>
+
+          <div id="kitchenView" class="kitchen-view hidden">
+            <div class="kitchen-scene">
+              <div class="kitchen-wall"><span class="window-glow"></span><span class="hanging-pan">🍳</span></div>
+              <div id="gameAnimationStage" class="game-animation-stage" aria-hidden="true"></div>
+              <div class="kitchen-stations" aria-label="Mutfak istasyonları">
+                <button class="kitchen-station station-board" data-game-action="cut" type="button"><span>🔪</span><b>Kesme tahtası</b><small>Doğra / kes</small></button>
+                <button class="kitchen-station station-bowl" data-game-action="mix" type="button"><span>🥣</span><b>Karıştırma kabı</b><small>Karıştır / çırp</small></button>
+                <button class="kitchen-station station-pour" data-game-action="add" type="button"><span>🥛</span><b>Ekleme alanı</b><small>Dök / ekle / kır</small></button>
+                <button class="kitchen-station station-stove" data-game-action="stove" type="button"><span>🔥</span><b>Ocak</b><small>Haşla / sotele</small></button>
+                <button class="kitchen-station station-oven" data-game-action="oven" type="button"><span>♨️</span><b>Fırın</b><small>Pişir / kızart</small></button>
+                <button class="kitchen-station station-clock" data-game-action="wait" type="button"><span>⏱️</span><b>Zaman</b><small>Beklet / dinlendir</small></button>
+                <button class="kitchen-station station-season" data-game-action="season" type="button"><span>🧂</span><b>Baharatlık</b><small>Tatlandır</small></button>
+                <button class="kitchen-station station-plate" data-game-action="serve" type="button"><span>🍽️</span><b>Servis</b><small>Tabağa al</small></button>
+              </div>
+              <div class="kitchen-counter">
+                <div><p class="eyebrow">Masadaki malzemeler</p><div id="gameTableIngredients" class="game-table-ingredients"></div></div>
+                <div class="step-card">
+                  <small id="gameStepCounter">Adım 1</small>
+                  <h3 id="gameStepText">Hazırlanış adımı</h3>
+                  <p id="gameStepHint" class="game-step-hint"><strong>Sıradaki görev:</strong> Uygun mutfak istasyonu burada gösterilecek.</p>
+                </div>
+              </div>
+            </div>
+            <aside class="game-log-panel">
+              <h3>Uygulama günlüğü</h3>
+              <div id="gameActionLog" class="game-action-log"></div>
+              <button id="advanceTimeButton" class="accent-button full-width hidden" type="button">⏩ Zamanı ileri al</button>
+              <button id="restartGameButton" class="secondary-button full-width" type="button">Baştan başla</button>
+            </aside>
+          </div>
+
+          <div id="cuttingMinigame" class="cutting-minigame hidden">
+            <div class="cutting-card">
+              <p class="eyebrow">Kesme tekniği</p>
+              <h3 id="cuttingInstruction">Doğrama tekniğini seçin</h3>
+              <div id="cutTechniqueButtons" class="cut-techniques"></div>
+              <div id="cuttingBoard" class="cutting-board" data-technique="slice">
+                <div id="cutFood" class="cut-food">🥕</div>
+                <div id="cutGuides" class="cut-guides"></div>
+              </div>
+              <p id="cutProgressText" class="cut-progress-text">Kesikli çizgilere sırayla dokunun.</p>
+              <button id="cancelCutButton" class="secondary-button" type="button">Mutfak ekranına dön</button>
+            </div>
+          </div>
+
+          <div id="gameResult" class="game-result hidden"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="recipeModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card">
+      <button id="closeModalButton" class="dialog-close" type="button" aria-label="Kapat">×</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div id="ingredientPickerModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ingredientPickerTitle">
+    <div class="modal-backdrop" data-close-ingredient-picker></div>
+    <div class="modal-card ingredient-picker-card">
+      <button id="closeIngredientPickerButton" class="dialog-close" type="button" aria-label="Kapat">×</button>
+      <div class="picker-content">
+        <p class="eyebrow">Alışveriş listesine aktar</p>
+        <h2 id="ingredientPickerTitle">Hangi malzemeler evde var?</h2>
+        <p id="ingredientPickerSubtitle">Bütün malzemeler listeye eklenir. İşaretlenenler tamamlandı, diğerleri alınacak madde olur.</p>
+        <div class="picker-bulk-actions"><button id="selectAllIngredientsButton" class="text-button" type="button">Hepsi evde var</button><button id="selectNoIngredientsButton" class="text-button" type="button">Hiçbiri evde yok</button></div>
+        <div id="ingredientPickerList" class="ingredient-picker-list"></div>
+        <div class="form-actions"><button id="cancelIngredientPickerButton" class="secondary-button" type="button">Vazgeç</button><button id="addSelectedIngredientsButton" class="primary-button" type="button">Bütün malzemeleri aktar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="gameRecipeBookModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="gameRecipeBookTitle">
+    <div class="modal-backdrop" data-close-game-recipe-book></div>
+    <div class="modal-card recipe-book-modal-card">
+      <button id="closeGameRecipeBookButton" class="dialog-close" type="button" aria-label="Tarif kitabını kapat">×</button>
+      <div id="gameRecipeBookContent" class="recipe-book-open"></div>
+    </div>
+  </div>
+
+  <div id="themeModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="themeModalTitle">
+    <div class="modal-backdrop" data-close-theme></div>
+    <div class="modal-card theme-card">
+      <button id="closeThemeButton" class="dialog-close" type="button" aria-label="Kapat">×</button>
+      <div class="theme-content">
+        <p class="eyebrow">Görünüm</p>
+        <h2 id="themeModalTitle">Renkleri özelleştir</h2>
+        <div class="theme-presets" id="themePresets"></div>
+        <div class="theme-grid">
+          <label>Ana renk<input id="primaryColorInput" type="color" value="#6c4cff"></label>
+          <label>Vurgu rengi<input id="accentColorInput" type="color" value="#ffb547"></label>
+          <label>Arka plan<input id="backgroundColorInput" type="color" value="#f6f3ff"></label>
+        </div>
+        <div class="theme-actions">
+          <button id="resetThemeButton" class="secondary-button" type="button">Varsayılana dön</button>
+          <button id="saveThemeButton" class="primary-button" type="button">Renkleri kaydet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+'use strict';
+
+const DB_NAME = 'lezzet-defteri-v2';
+const DB_VERSION = 1;
+const RECIPE_STORE = 'recipes';
+const FALLBACK_KEY = 'lezzet-defteri.recipes.v2';
+const LEGACY_KEY = 'lezzet-defteri.recipes.v1';
+const THEME_KEY = 'lezzet-defteri.theme.v1';
+const SHOPPING_KEY = 'lezzet-defteri.shopping.v1';
+
+const uid = () => {
+  if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+  return `recipe-${Date.now()}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
+};
+
+const seedBlueprints = [
+  ['Menemen', 'Türk', 'Kahvaltı', ['yumurta', 'domates', 'biber'], ['pratik', 'ekonomik', 'vejetaryen'], 'Domates, biber ve yumurtayla hazırlanan klasik kahvaltılık.'],
+  ['Mercimek Çorbası', 'Türk', 'Çorba', ['mercimek', 'soğan', 'havuç'], ['ekonomik', 'vegan', 'sıcak'], 'Kırmızı mercimek ve sebzelerle hazırlanan pürüzsüz çorba.'],
+  ['Ev Mantısı', 'Türk', 'Akşam yemeği', ['kıyma', 'hamur', 'yoğurt'], ['geleneksel', 'doyurucu'], 'Sarımsaklı yoğurt ve tereyağlı sosla servis edilen ev mantısı.'],
+  ['Kısır', 'Türk', 'Atıştırmalık', ['bulgur', 'maydanoz', 'domates'], ['vegan', 'soğuk', 'ekonomik'], 'İnce bulgur, yeşillik ve nar ekşisiyle hazırlanan salata.'],
+  ['Karnıyarık', 'Türk', 'Akşam yemeği', ['patlıcan', 'kıyma', 'domates'], ['fırın', 'geleneksel'], 'Kıymalı içle doldurulan fırınlanmış patlıcan.'],
+  ['Peynirli Gözleme', 'Türk', 'Kahvaltı', ['hamur', 'peynir', 'maydanoz'], ['tava', 'pratik'], 'İnce hamur arasında peynirli içle yapılan gözleme.'],
+  ['Pesto Makarna', 'İtalyan', 'Akşam yemeği', ['makarna', 'fesleğen', 'peynir'], ['hızlı', 'vejetaryen'], 'Fesleğen aromalı, kısa sürede hazırlanan makarna.'],
+  ['Sebzeli Lazanya', 'İtalyan', 'Akşam yemeği', ['makarna', 'kabak', 'peynir'], ['fırın', 'vejetaryen'], 'Kat kat sebze, domates sosu ve peynirle hazırlanan lazanya.'],
+  ['Mantarlı Risotto', 'İtalyan', 'Akşam yemeği', ['pirinç', 'mantar', 'peynir'], ['kremamsı', 'vejetaryen'], 'Arborio pirinci ve mantarla hazırlanan kremamsı risotto.'],
+  ['Tiramisu', 'İtalyan', 'Tatlı', ['kahve', 'mascarpone', 'bisküvi'], ['soğuk', 'tatlı'], 'Kahve, mascarpone ve kakao katmanlarından oluşan tatlı.'],
+  ['Tavuklu Ramen', 'Japon', 'Akşam yemeği', ['tavuk', 'noodle', 'yumurta'], ['yüksek protein', 'sıcak', 'hızlı'], 'Sebzeli, doyurucu ve hızlı hazırlanabilen ev tipi ramen.'],
+  ['Somonlu Sushi Kasesi', 'Japon', 'Öğle yemeği', ['somon', 'pirinç', 'avokado'], ['balık', 'dengeli'], 'Sushi lezzetlerini pratik bir kasede birleştiren öğün.'],
+  ['Tavuk Teriyaki', 'Japon', 'Akşam yemeği', ['tavuk', 'pirinç', 'soya sosu'], ['yüksek protein', 'tatlı-tuzlu'], 'Parlak teriyaki sosuyla kaplanan tavuk ve pirinç.'],
+  ['Okonomiyaki', 'Japon', 'Öğle yemeği', ['lahana', 'yumurta', 'un'], ['tava', 'sebzeli'], 'Lahana ağırlıklı Japon usulü tuzlu pankek.'],
+  ['Bibimbap', 'Kore', 'Akşam yemeği', ['pirinç', 'sebze', 'yumurta'], ['dengeli', 'acı'], 'Pirinç, sotelenmiş sebzeler ve yumurtayla hazırlanan Kore kasesi.'],
+  ['Tteokbokki', 'Kore', 'Atıştırmalık', ['pirinç keki', 'gochujang', 'soğan'], ['acı', 'sokak yemeği'], 'Acı ve hafif tatlı soslu Kore pirinç kekleri.'],
+  ['Kore Usulü Çıtır Tavuk', 'Kore', 'Akşam yemeği', ['tavuk', 'gochujang', 'susam'], ['çıtır', 'acı', 'yüksek protein'], 'Gochujang sosuyla kaplanan çıtır tavuk parçaları.'],
+  ['Etli Taco', 'Meksika', 'Akşam yemeği', ['et', 'tortilla', 'domates'], ['acı', 'hızlı'], 'Baharatlı et ve taze garnitürlerle doldurulan tortilla.'],
+  ['Tavuklu Quesadilla', 'Meksika', 'Öğle yemeği', ['tavuk', 'tortilla', 'peynir'], ['hızlı', 'tava'], 'Peynir ve tavukla doldurulup tavada kızartılan tortilla.'],
+  ['Guacamole', 'Meksika', 'Atıştırmalık', ['avokado', 'lime', 'soğan'], ['vegan', 'soğuk', 'hızlı'], 'Avokado ve lime ile hazırlanan taze dip sos.'],
+  ['Chili Con Carne', 'Meksika', 'Akşam yemeği', ['kıyma', 'fasulye', 'domates'], ['doyurucu', 'acı', 'yüksek protein'], 'Kıyma, fasulye ve baharatlarla pişen yoğun yemek.'],
+  ['Butter Chicken', 'Hint', 'Akşam yemeği', ['tavuk', 'domates', 'krema'], ['baharatlı', 'yüksek protein'], 'Baharatlı domates ve tereyağı sosunda yumuşak tavuk.'],
+  ['Chana Masala', 'Hint', 'Akşam yemeği', ['nohut', 'domates', 'soğan'], ['vegan', 'baharatlı', 'ekonomik'], 'Nohut ve aromatik baharatlarla hazırlanan yoğun köri.'],
+  ['Sebzeli Biryani', 'Hint', 'Akşam yemeği', ['pirinç', 'sebze', 'baharat'], ['vejetaryen', 'aromatik'], 'Baharatlı basmati pirinci ve sebzelerle hazırlanan pilav.'],
+  ['Yunan Salatası', 'Akdeniz', 'Öğle yemeği', ['domates', 'salatalık', 'peynir'], ['soğuk', 'vejetaryen', 'hızlı'], 'Taze sebzeler, zeytin ve beyaz peynirli salata.'],
+  ['Humus Kasesi', 'Orta Doğu', 'Öğle yemeği', ['nohut', 'tahin', 'sebze'], ['vegan', 'yüksek protein'], 'Humus, tahıl ve taze sebzelerden oluşan doyurucu kase.'],
+  ['Falafel', 'Orta Doğu', 'Atıştırmalık', ['nohut', 'maydanoz', 'baharat'], ['vegan', 'çıtır'], 'Nohut ve yeşilliklerle hazırlanan baharatlı köfteler.'],
+  ['Pad Thai', 'Tayland', 'Akşam yemeği', ['pirinç noodle', 'yumurta', 'yer fıstığı'], ['tatlı-ekşi', 'hızlı'], 'Tavada pişen noodle, yumurta ve yer fıstıklı Tayland klasiği.'],
+  ['Tom Yum Çorbası', 'Tayland', 'Çorba', ['karides', 'mantar', 'lime'], ['acı', 'ekşi', 'deniz ürünü'], 'Lime, acı biber ve karides aromalı ekşi çorba.'],
+  ['Kung Pao Tavuk', 'Çin', 'Akşam yemeği', ['tavuk', 'yer fıstığı', 'biber'], ['acı', 'yüksek protein'], 'Biber ve yer fıstığıyla wok tavada pişen tavuk.'],
+  ['Sebzeli Kızarmış Pirinç', 'Çin', 'Öğle yemeği', ['pirinç', 'sebze', 'yumurta'], ['hızlı', 'tava', 'ekonomik'], 'Artan pirinci değerlendirmenin pratik ve lezzetli yolu.'],
+  ['Fransız Omleti', 'Fransız', 'Kahvaltı', ['yumurta', 'tereyağı', 'peynir'], ['hızlı', 'yüksek protein'], 'Yumuşak dokulu ve tereyağlı klasik Fransız omleti.'],
+  ['Ratatouille', 'Fransız', 'Akşam yemeği', ['patlıcan', 'kabak', 'domates'], ['vegan', 'fırın', 'sebzeli'], 'Renkli sebzelerin domates sosunda ağır ağır piştiği yemek.'],
+  ['Yaban Mersinli Pancake', 'Amerikan', 'Kahvaltı', ['un', 'yumurta', 'yaban mersini'], ['tatlı', 'tava'], 'Kabaran pankekler ve taze yaban mersiniyle kahvaltı.'],
+  ['Ev Yapımı Burger', 'Amerikan', 'Akşam yemeği', ['kıyma', 'ekmek', 'peynir'], ['doyurucu', 'yüksek protein'], 'Izgara köfte ve taze malzemelerle hazırlanan burger.'],
+  ['Fırında Somon', 'Akdeniz', 'Akşam yemeği', ['somon', 'limon', 'sebze'], ['balık', 'yüksek protein', 'fırın'], 'Limon ve otlarla fırında pişirilen somon.']
+];
+
+const baseIngredients = {
+  yumurta: '2 adet yumurta', tavuk: '250 g tavuk', kıyma: '250 g kıyma', et: '250 g dana eti', somon: '250 g somon',
+  pirinç: '1 su bardağı pirinç', makarna: '250 g makarna', nohut: '1,5 su bardağı haşlanmış nohut', domates: '2 adet domates',
+  sebze: '2 su bardağı karışık sebze', patlıcan: '2 adet patlıcan', peynir: '100 g peynir', mantar: '200 g mantar',
+  noodle: '2 porsiyon noodle', 'pirinç noodle': '200 g pirinç noodle', karides: '250 g karides', avokado: '1 adet avokado'
+};
+
+function makeSeedRecipes() {
+  const now = Date.now();
+  return seedBlueprints.map((item, index) => {
+    const [title, culture, meal, ingredientTags, extraTags, description] = item;
+    const ingredients = ingredientTags.map(tag => baseIngredients[tag] || `1 ölçü ${tag}`);
+    ingredients.push('1 yemek kaşığı zeytinyağı', 'Tuz ve karabiber');
+    return {
+      id: uid(), title, culture, meal, description,
+      prepTime: 8 + (index % 4) * 5,
+      cookTime: 10 + (index % 6) * 7,
+      servings: 2 + (index % 3),
+      difficulty: index % 7 === 0 ? 'Orta' : 'Kolay',
+      ingredientTags, extraTags,
+      ingredients,
+      steps: [
+        'Tüm malzemeleri hazırlayın ve gerekiyorsa doğrayın.',
+        'Ana malzemeleri uygun tavada veya tencerede pişirin.',
+        'Baharatları ve sosu ekleyip lezzetler birleşene kadar devam edin.',
+        'Sıcak veya tarife uygun sıcaklıkta servis edin.'
+      ],
+      image: '',
+      favorite: [0, 6, 10, 14, 21, 25, 35].includes(index),
+      eatCount: index % 9,
+      lastEaten: index % 3 === 0 ? new Date(now - index * 86400000).toISOString() : null,
+      createdAt: new Date(now - (seedBlueprints.length - index) * 3600000).toISOString(),
+      updatedAt: new Date(now - index * 1800000).toISOString()
+    };
+  });
+}
+
+class RecipeStorage {
+  constructor() { this.db = null; this.mode = 'indexedDB'; this.memory = []; }
+
+  async init() {
+    if (!('indexedDB' in window)) { this.useFallback(); return; }
+    try {
+      this.db = await new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(RECIPE_STORE)) db.createObjectStore(RECIPE_STORE, { keyPath: 'id' });
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+        request.onblocked = () => reject(new Error('Veritabanı başka bir sekmede açık.'));
+      });
+    } catch (error) {
+      console.warn('IndexedDB açılamadı; localStorage kullanılacak.', error);
+      this.useFallback();
+    }
+  }
+
+  useFallback() {
+    try {
+      const testKey = '__lezzet_storage_test__';
+      localStorage.setItem(testKey, '1');
+      localStorage.removeItem(testKey);
+      this.mode = 'localStorage';
+    } catch {
+      this.mode = 'memory';
+    }
+  }
+
+  async getAll() {
+    if (this.mode === 'memory') return [...this.memory];
+    if (this.mode === 'localStorage') {
+      try { return JSON.parse(localStorage.getItem(FALLBACK_KEY) || '[]'); }
+      catch { this.mode = 'memory'; return [...this.memory]; }
+    }
+    try {
+      return await new Promise((resolve, reject) => {
+        const request = this.db.transaction(RECIPE_STORE, 'readonly').objectStore(RECIPE_STORE).getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.warn('IndexedDB okuma hatası; geçici depolamaya geçiliyor.', error);
+      this.useFallback();
+      return this.getAll();
+    }
+  }
+
+  async put(recipe) {
+    if (this.mode === 'memory') {
+      const index = this.memory.findIndex(item => item.id === recipe.id);
+      if (index >= 0) this.memory[index] = recipe; else this.memory.unshift(recipe);
+      return;
+    }
+    if (this.mode === 'localStorage') {
+      const all = await this.getAll();
+      const next = all.some(item => item.id === recipe.id) ? all.map(item => item.id === recipe.id ? recipe : item) : [recipe, ...all];
+      try { localStorage.setItem(FALLBACK_KEY, JSON.stringify(next)); return; }
+      catch { this.mode = 'memory'; this.memory = next; return; }
+    }
+    try {
+      return await new Promise((resolve, reject) => {
+        const request = this.db.transaction(RECIPE_STORE, 'readwrite').objectStore(RECIPE_STORE).put(recipe);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      this.useFallback();
+      return this.put(recipe);
+    }
+  }
+
+  async delete(id) {
+    if (this.mode === 'memory') { this.memory = this.memory.filter(item => item.id !== id); return; }
+    if (this.mode === 'localStorage') {
+      const all = await this.getAll();
+      const next = all.filter(item => item.id !== id);
+      try { localStorage.setItem(FALLBACK_KEY, JSON.stringify(next)); return; }
+      catch { this.mode = 'memory'; this.memory = next; return; }
+    }
+    try {
+      return await new Promise((resolve, reject) => {
+        const request = this.db.transaction(RECIPE_STORE, 'readwrite').objectStore(RECIPE_STORE).delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      this.useFallback();
+      return this.delete(id);
+    }
+  }
+
+  async replaceAll(items) {
+    if (this.mode === 'memory') { this.memory = [...items]; return; }
+    if (this.mode === 'localStorage') {
+      try { localStorage.setItem(FALLBACK_KEY, JSON.stringify(items)); return; }
+      catch { this.mode = 'memory'; this.memory = [...items]; return; }
+    }
+    try {
+      return await new Promise((resolve, reject) => {
+        const tx = this.db.transaction(RECIPE_STORE, 'readwrite');
+        const store = tx.objectStore(RECIPE_STORE);
+        store.clear();
+        items.forEach(item => store.put(item));
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error);
+      });
+    } catch (error) {
+      this.useFallback();
+      return this.replaceAll(items);
+    }
+  }
+}
+
+const storage = new RecipeStorage();
+let recipes = [];
+let activePage = 'home';
+let currentRandomId = null;
+let pendingImage = '';
+let isRemovingImage = false;
+let socialImportDraft = null;
+let shoppingItems = [];
+let ingredientPickerRecipeId = null;
+let gameState = null;
+let animationTimer = null;
+
+const elements = {};
+const elementIds = [
+  'pageTitle', 'homePage', 'recipesPage', 'editorPage', 'statsGrid', 'frequentRecipes', 'favoriteRecipes',
+  'recipeList', 'searchInput', 'cultureFilter', 'mealFilter', 'ingredientFilter', 'favoriteFilter', 'sortFilter',
+  'resultCount', 'clearFiltersButton', 'activeFilterChips', 'recipeForm', 'recipeId', 'formTitle', 'cancelEditButton',
+  'clearFormButton', 'titleInput', 'cultureInput', 'mealInput', 'prepTimeInput', 'cookTimeInput', 'servingsInput',
+  'difficultyInput', 'descriptionInput', 'ingredientTagsInput', 'extraTagsInput', 'ingredientsInput', 'stepsInput',
+  'photoInput', 'photoPreview', 'removePhotoButton', 'suggestedTagButtons', 'randomSpotlight', 'spotlightMedia',
+  'spotlightTitle', 'spotlightDescription', 'spotlightMeta', 'randomRecipeButton', 'openRandomButton', 'recipeModal',
+  'modalContent', 'closeModalButton', 'themeModal', 'themeButton', 'mobileThemeButton', 'closeThemeButton',
+  'themePresets', 'primaryColorInput', 'accentColorInput', 'backgroundColorInput', 'saveThemeButton', 'resetThemeButton',
+  'exportButton', 'importInput', 'toast', 'socialImportPage', 'socialImportForm', 'importUrlInput',
+  'importSourceTextInput', 'analyzeImportButton', 'clearImportButton', 'importStatus', 'importPreview',
+  'importPreviewImage', 'importSourceBadge', 'importSourceLink', 'importSourceTitle', 'importCreatorText',
+  'importTitleInput', 'importCultureInput', 'importMealInput', 'importPrepTimeInput', 'importCookTimeInput',
+  'importServingsInput', 'importDifficultyInput', 'importDescriptionInput', 'importIngredientTagsInput',
+  'importExtraTagsInput', 'importIngredientsInput', 'importStepsInput', 'reanalyzeImportButton', 'saveImportedRecipeButton',
+  'importParserSummary', 'shoppingPage', 'shoppingForm', 'shoppingInput', 'shoppingList', 'shoppingCountBadge',
+  'clearCheckedShoppingButton', 'clearShoppingButton', 'ingredientPickerModal', 'closeIngredientPickerButton',
+  'cancelIngredientPickerButton', 'ingredientPickerList', 'ingredientPickerSubtitle', 'selectAllIngredientsButton',
+  'selectNoIngredientsButton', 'addSelectedIngredientsButton', 'gamePage', 'gameSelector', 'gameSearchInput',
+  'gameRecipeList', 'gameShell', 'exitGameButton', 'openGameRecipeBookButton', 'gameRecipeEmoji', 'gameRecipeTitle', 'gameProgressText',
+  'gameProgressBar', 'gameMessage', 'pantryView', 'pantryShelves', 'selectedIngredientTray', 'confirmPantryButton',
+  'kitchenView', 'gameAnimationStage', 'gameTableIngredients', 'gameStepCounter', 'gameStepText', 'gameStepHint', 'gameActionLog',
+  'advanceTimeButton', 'restartGameButton', 'cuttingMinigame', 'cuttingInstruction', 'cutTechniqueButtons',
+  'cuttingBoard', 'cutFood', 'cutGuides', 'cutProgressText', 'cancelCutButton', 'gameResult', 'gameRecipeBookModal',
+  'closeGameRecipeBookButton', 'gameRecipeBookContent'
+];
+
+function bindElements() {
+  elementIds.forEach(id => { elements[id] = document.getElementById(id); });
+  elements.navButtons = [...document.querySelectorAll('[data-page]')];
+}
+
+
+function safeHttpUrl(value = '') {
+  try {
+    const url = new URL(String(value).trim());
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch { return ''; }
+}
+
+function isSafeImageUrl(value = '') {
+  const text = String(value || '').trim();
+  return text.startsWith('data:image/') || Boolean(safeHttpUrl(text));
+}
+
+function platformLabel(platform = '') {
+  const key = normalizeText(platform);
+  if (key.includes('instagram')) return 'Instagram';
+  if (key.includes('youtube')) return 'YouTube';
+  if (key.includes('tiktok')) return 'TikTok';
+  if (key.includes('pinterest')) return 'Pinterest';
+  if (key.includes('facebook')) return 'Facebook';
+  return 'Web';
+}
+
+function platformIcon(platform = '') {
+  const label = platformLabel(platform);
+  return ({ Instagram: '◎', YouTube: '▶', TikTok: '♪', Pinterest: '◉', Facebook: 'f', Web: '↗' })[label] || '↗';
+}
+
+function normalizeRecipe(raw) {
+  const now = new Date().toISOString();
+  return {
+    id: raw.id || uid(),
+    title: String(raw.title || 'İsimsiz tarif').trim(),
+    culture: String(raw.culture || 'Diğer').trim(),
+    meal: String(raw.meal || 'Akşam yemeği').trim(),
+    description: String(raw.description || '').trim(),
+    prepTime: Number(raw.prepTime || 0),
+    cookTime: Number(raw.cookTime || 0),
+    servings: Math.max(1, Number(raw.servings || 1)),
+    difficulty: raw.difficulty || 'Kolay',
+    ingredientTags: Array.isArray(raw.ingredientTags) ? raw.ingredientTags.filter(Boolean).map(String) : [],
+    extraTags: Array.isArray(raw.extraTags) ? raw.extraTags.filter(Boolean).map(String) : [],
+    ingredients: Array.isArray(raw.ingredients) ? raw.ingredients.filter(Boolean).map(String) : [],
+    steps: Array.isArray(raw.steps) ? raw.steps.filter(Boolean).map(String) : [],
+    image: isSafeImageUrl(raw.image) ? String(raw.image) : '',
+    sourceType: String(raw.sourceType || '').trim(),
+    sourcePlatform: String(raw.sourcePlatform || '').trim(),
+    sourceUrl: safeHttpUrl(raw.sourceUrl),
+    sourceCreator: String(raw.sourceCreator || '').trim(),
+    sourceTitle: String(raw.sourceTitle || '').trim(),
+    sourceThumbnail: isSafeImageUrl(raw.sourceThumbnail) ? String(raw.sourceThumbnail) : '',
+    importedAt: raw.importedAt || null,
+    favorite: Boolean(raw.favorite),
+    eatCount: Number(raw.eatCount || 0),
+    lastEaten: raw.lastEaten || null,
+    createdAt: raw.createdAt || now,
+    updatedAt: raw.updatedAt || now
+  };
+}
+
+async function loadInitialData() {
+  await storage.init();
+  recipes = (await storage.getAll()).map(normalizeRecipe);
+
+  if (!recipes.length) {
+    let legacy = [];
+    try { legacy = JSON.parse(localStorage.getItem(LEGACY_KEY) || '[]'); } catch { legacy = []; }
+    if (Array.isArray(legacy) && legacy.length) {
+      recipes = legacy.map(normalizeRecipe);
+      await storage.replaceAll(recipes);
+      showToast('Önceki tarifleriniz yeni sürüme aktarıldı.');
+    } else {
+      recipes = makeSeedRecipes();
+      await storage.replaceAll(recipes);
+    }
+  }
+}
+
+function normalizeText(value = '') {
+  return String(value).toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ı/g, 'i');
+}
+
+function parseCommaList(value = '') {
+  return [...new Set(value.split(',').map(item => item.trim()).filter(Boolean))];
+}
+
+function parseLineList(value = '') {
+  return value.split(/\r?\n/).map(item => item.trim()).filter(Boolean);
+}
+
+function escapeHtml(value = '') {
+  return String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
+}
+
+function totalTime(recipe) { return Number(recipe.prepTime || 0) + Number(recipe.cookTime || 0); }
+function formatDate(value) {
+  if (!value) return 'Henüz kaydedilmedi';
+  try { return new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value)); }
+  catch { return 'Bilinmiyor'; }
+}
+
+function getRecipeEmoji(recipe) {
+  const text = normalizeText([recipe.title, recipe.culture, ...recipe.ingredientTags].join(' '));
+  const map = [
+    ['somon', '🐟'], ['balik', '🐟'], ['karides', '🦐'], ['tavuk', '🍗'], ['et', '🥩'], ['kiyma', '🥩'],
+    ['makarna', '🍝'], ['ramen', '🍜'], ['noodle', '🍜'], ['corba', '🥣'], ['yumurta', '🍳'], ['kahvalti', '🥞'],
+    ['tatli', '🍰'], ['tiramisu', '🍰'], ['salata', '🥗'], ['sebze', '🥦'], ['burger', '🍔'], ['taco', '🌮'],
+    ['pizza', '🍕'], ['pirinc', '🍚'], ['sushi', '🍣'], ['hint', '🍛'], ['turk', '🍲']
+  ];
+  return map.find(([key]) => text.includes(key))?.[1] || '🍽️';
+}
+
+function validImage(image) { return isSafeImageUrl(image); }
+
+function showPage(page) {
+  activePage = page;
+  const pages = {
+    home: elements.homePage,
+    recipes: elements.recipesPage,
+    editor: elements.editorPage,
+    socialImport: elements.socialImportPage,
+    shopping: elements.shoppingPage,
+    game: elements.gamePage
+  };
+  Object.entries(pages).forEach(([key, node]) => node?.classList.toggle('active', key === page));
+  document.querySelectorAll('.nav-button').forEach(button => button.classList.toggle('active', button.dataset.page === page));
+  const titles = {
+    home: 'Ana sayfa', recipes: 'Tarifler', editor: elements.recipeId.value ? 'Tarifi düzenle' : 'Yeni tarif',
+    socialImport: 'Linkten tarif ekle', shopping: 'Alışveriş listesi', game: 'Tarifi oyna'
+  };
+  elements.pageTitle.textContent = titles[page] || 'Lezzet Defteri';
+  if (page === 'editor') setTimeout(() => elements.titleInput.focus({ preventScroll: true }), 100);
+  if (page === 'socialImport') setTimeout(() => elements.importUrlInput.focus({ preventScroll: true }), 100);
+  if (page === 'shopping') setTimeout(() => elements.shoppingInput.focus({ preventScroll: true }), 100);
+  if (page === 'game' && !gameState) renderGameRecipeList();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function createRecipeCard(recipe) {
+  const imageMarkup = validImage(recipe.image)
+    ? `<img src="${recipe.image}" alt="${escapeHtml(recipe.title)} fotoğrafı" loading="lazy">`
+    : `<div class="recipe-emoji" aria-hidden="true">${getRecipeEmoji(recipe)}</div>`;
+  const tags = [recipe.culture, recipe.meal, ...recipe.ingredientTags.slice(0, 3)];
+  return `<article class="recipe-card" data-id="${escapeHtml(recipe.id)}">
+    <div class="recipe-card-top">
+      ${imageMarkup}
+      ${recipe.sourceUrl ? `<span class="source-badge">${platformIcon(recipe.sourcePlatform)} ${escapeHtml(platformLabel(recipe.sourcePlatform))}</span>` : ''}
+      <button class="favorite-button" type="button" data-action="favorite" aria-label="${recipe.favorite ? 'Favorilerden çıkar' : 'Favoriye ekle'}">${recipe.favorite ? '♥️' : '♡'}</button>
+    </div>
+    <div class="recipe-card-body">
+      <h3>${escapeHtml(recipe.title)}</h3>
+      <p class="recipe-card-description">${escapeHtml(recipe.description || 'Bu tarif için kısa açıklama eklenmemiş.')}</p>
+      <div class="tag-row">${tags.map((tag, index) => `<span class="tag${index > 1 ? ' alt' : ''}">${escapeHtml(tag)}</span>`).join('')}</div>
+      <div class="meta-row"><span>⏱ ${totalTime(recipe)} dk</span><span>👥 ${recipe.servings}</span><span>✓ ${recipe.eatCount || 0}</span></div>
+      <div class="card-actions">
+        <button class="view-button" type="button" data-action="view">Tarifi aç</button>
+        <button class="icon-button" type="button" data-action="ate" aria-label="Bugün yedim">✓</button>
+        <button class="icon-button" type="button" data-action="edit" aria-label="Düzenle">✎</button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function emptyState(title, text = '') {
+  return `<div class="empty-state"><strong>${escapeHtml(title)}</strong>${escapeHtml(text)}</div>`;
+}
+
+function renderHome() {
+  const totalTags = new Set(recipes.flatMap(recipe => [...recipe.ingredientTags, ...recipe.extraTags].map(normalizeText))).size;
+  const cultures = new Set(recipes.map(recipe => normalizeText(recipe.culture))).size;
+  const stats = [
+    ['Toplam tarif', recipes.length], ['Mutfak çeşidi', cultures], ['Etiket', totalTags], ['Favori', recipes.filter(item => item.favorite).length]
+  ];
+  elements.statsGrid.innerHTML = stats.map(([label, value]) => `<div class="stat-card"><span>${label}</span><strong>${value}</strong></div>`).join('');
+
+  const frequent = [...recipes].sort((a, b) => (b.eatCount || 0) - (a.eatCount || 0)).filter(item => item.eatCount > 0).slice(0, 6);
+  const favorites = recipes.filter(item => item.favorite).slice(0, 6);
+  elements.frequentRecipes.innerHTML = frequent.length ? frequent.map(createRecipeCard).join('') : emptyState('Henüz tüketim kaydı yok', 'Bir tarifte “Bugün yedim” düğmesini kullanın.');
+  elements.favoriteRecipes.innerHTML = favorites.length ? favorites.map(createRecipeCard).join('') : emptyState('Henüz favori yok', 'Kalp simgesiyle tarifleri favorilerinize ekleyin.');
+}
+
+function uniqueSorted(values) {
+  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, 'tr'));
+}
+
+function refillSelect(select, values) {
+  const current = select.value;
+  select.innerHTML = '<option value="">Tümü</option>' + values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('');
+  if (values.includes(current)) select.value = current;
+}
+
+function populateFilters() {
+  refillSelect(elements.cultureFilter, uniqueSorted(recipes.map(item => item.culture)));
+  refillSelect(elements.mealFilter, uniqueSorted(recipes.map(item => item.meal)));
+  refillSelect(elements.ingredientFilter, uniqueSorted(recipes.flatMap(item => item.ingredientTags)));
+}
+
+function getFilteredRecipes() {
+  const search = normalizeText(elements.searchInput.value);
+  let filtered = recipes.filter(recipe => {
+    const searchable = normalizeText([
+      recipe.title, recipe.culture, recipe.meal, recipe.description, recipe.sourcePlatform, recipe.sourceCreator, recipe.sourceTitle,
+      ...recipe.ingredientTags, ...recipe.extraTags, ...recipe.ingredients, ...recipe.steps
+    ].join(' '));
+    if (search && !searchable.includes(search)) return false;
+    if (elements.cultureFilter.value && recipe.culture !== elements.cultureFilter.value) return false;
+    if (elements.mealFilter.value && recipe.meal !== elements.mealFilter.value) return false;
+    if (elements.ingredientFilter.value && !recipe.ingredientTags.includes(elements.ingredientFilter.value)) return false;
+    if (elements.favoriteFilter.value === 'favorite' && !recipe.favorite) return false;
+    if (elements.favoriteFilter.value === 'frequent' && Number(recipe.eatCount || 0) < 2) return false;
+    return true;
+  });
+
+  const sort = elements.sortFilter.value;
+  if (sort === 'name') filtered.sort((a, b) => a.title.localeCompare(b.title, 'tr'));
+  if (sort === 'time') filtered.sort((a, b) => totalTime(a) - totalTime(b));
+  if (sort === 'eaten') filtered.sort((a, b) => (b.eatCount || 0) - (a.eatCount || 0));
+  if (sort === 'newest') filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  return filtered;
+}
+
+function renderFilterChips() {
+  const chips = [];
+  if (elements.searchInput.value) chips.push(['search', `Arama: ${elements.searchInput.value}`]);
+  if (elements.cultureFilter.value) chips.push(['culture', elements.cultureFilter.value]);
+  if (elements.mealFilter.value) chips.push(['meal', elements.mealFilter.value]);
+  if (elements.ingredientFilter.value) chips.push(['ingredient', elements.ingredientFilter.value]);
+  if (elements.favoriteFilter.value) chips.push(['favorite', elements.favoriteFilter.options[elements.favoriteFilter.selectedIndex].text]);
+  elements.activeFilterChips.innerHTML = chips.map(([key, label]) => `<button class="filter-chip" type="button" data-clear-filter="${key}">${escapeHtml(label)} ×</button>`).join('');
+}
+
+function renderRecipesPage() {
+  const filtered = getFilteredRecipes();
+  elements.resultCount.textContent = `${filtered.length} tarif`;
+  elements.recipeList.innerHTML = filtered.length ? filtered.map(createRecipeCard).join('') : emptyState('Eşleşen tarif bulunamadı', 'Filtreleri azaltın veya yeni bir tarif ekleyin.');
+  renderFilterChips();
+}
+
+function renderAll() {
+  populateFilters();
+  renderHome();
+  renderRecipesPage();
+  renderShoppingList();
+  renderGameRecipeList();
+}
+
+function openRecipeModal(recipeId) {
+  const recipe = recipes.find(item => item.id === recipeId);
+  if (!recipe) return;
+  const imageMarkup = validImage(recipe.image)
+    ? `<img src="${recipe.image}" alt="${escapeHtml(recipe.title)} fotoğrafı">`
+    : `<div class="dialog-hero-placeholder" aria-hidden="true">${getRecipeEmoji(recipe)}</div>`;
+  elements.modalContent.innerHTML = `
+    <div class="dialog-hero">
+      ${imageMarkup}
+      <div class="dialog-hero-content">
+        <p class="eyebrow light">${escapeHtml(recipe.culture)} · ${escapeHtml(recipe.meal)}</p>
+        <h2 id="modalTitle">${escapeHtml(recipe.title)}</h2>
+        <p>${escapeHtml(recipe.description || '')}</p>
+        <div class="spotlight-meta">
+          <span>⏱ ${totalTime(recipe)} dk</span><span>👥 ${recipe.servings} porsiyon</span><span>◆ ${escapeHtml(recipe.difficulty)}</span><span>✓ ${recipe.eatCount || 0} kez</span>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-body">
+      <div class="tag-row">${[...recipe.ingredientTags, ...recipe.extraTags].map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>
+      <div class="dialog-columns">
+        <section><h3>Malzemeler</h3><ul>${recipe.ingredients.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul></section>
+        <section><h3>Hazırlanışı</h3><ol>${recipe.steps.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ol></section>
+      </div>
+      ${recipe.sourceUrl ? `<div class="source-attribution"><strong>${platformIcon(recipe.sourcePlatform)} ${escapeHtml(platformLabel(recipe.sourcePlatform))} kaynağı:</strong> <a href="${escapeHtml(recipe.sourceUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(recipe.sourceCreator || recipe.sourceTitle || 'Orijinal içeriği aç')} ↗</a></div>` : ''}
+      <p><strong>Son yenme:</strong> ${formatDate(recipe.lastEaten)}</p>
+      <div class="dialog-toolbar">
+        <button class="primary-button" type="button" data-modal-action="ate" data-id="${recipe.id}">✓ Bugün yedim</button>
+        <button class="accent-button" type="button" data-modal-action="shopping" data-id="${recipe.id}">☑ Malzemeleri listeye ekle</button>
+        <button class="secondary-button" type="button" data-modal-action="play" data-id="${recipe.id}">🎮 Tarifi oyna</button>
+        <button class="secondary-button" type="button" data-modal-action="favorite" data-id="${recipe.id}">${recipe.favorite ? '♥ Favorilerden çıkar' : '♡ Favoriye ekle'}</button>
+        <button class="secondary-button" type="button" data-modal-action="edit" data-id="${recipe.id}">✎ Düzenle</button>
+        <button class="secondary-button delete-button" type="button" data-modal-action="delete" data-id="${recipe.id}">Sil</button>
+      </div>
+    </div>`;
+  openModal(elements.recipeModal);
+}
+
+function openModal(modal) {
+  modal.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+}
+
+function closeModal(modal) {
+  if (!modal) return;
+  modal.classList.add('hidden');
+  const anyOpen = [...document.querySelectorAll('.modal')].some(node => !node.classList.contains('hidden'));
+  if (!anyOpen) document.body.classList.remove('modal-open');
+}
+
+async function saveRecipe(recipe) {
+  await storage.put(recipe);
+  const index = recipes.findIndex(item => item.id === recipe.id);
+  if (index >= 0) recipes[index] = recipe; else recipes.unshift(recipe);
+  renderAll();
+}
+
+async function toggleFavorite(recipeId) {
+  const recipe = recipes.find(item => item.id === recipeId);
+  if (!recipe) return;
+  recipe.favorite = !recipe.favorite;
+  recipe.updatedAt = new Date().toISOString();
+  await saveRecipe(recipe);
+  showToast(recipe.favorite ? 'Favorilere eklendi.' : 'Favorilerden çıkarıldı.');
+}
+
+async function markAsEaten(recipeId) {
+  const recipe = recipes.find(item => item.id === recipeId);
+  if (!recipe) return;
+  recipe.eatCount = Number(recipe.eatCount || 0) + 1;
+  recipe.lastEaten = new Date().toISOString();
+  recipe.updatedAt = recipe.lastEaten;
+  await saveRecipe(recipe);
+  showToast('Tüketim kaydı eklendi.');
+}
+
+function updatePhotoPreview(image = '') {
+  if (validImage(image)) elements.photoPreview.innerHTML = `<img src="${image}" alt="Seçilen tarif fotoğrafı önizlemesi">`;
+  else elements.photoPreview.innerHTML = '<span>📷</span><small>Fotoğraf eklenmedi</small>';
+}
+
+function resetEditor({ keepPage = true } = {}) {
+  elements.recipeForm.reset();
+  elements.recipeId.value = '';
+  elements.prepTimeInput.value = 10;
+  elements.cookTimeInput.value = 20;
+  elements.servingsInput.value = 2;
+  elements.difficultyInput.value = 'Kolay';
+  elements.formTitle.textContent = 'Yeni tarif ekle';
+  elements.cancelEditButton.classList.add('hidden');
+  pendingImage = '';
+  isRemovingImage = false;
+  updatePhotoPreview();
+  clearFieldErrors();
+  if (keepPage && activePage === 'editor') elements.pageTitle.textContent = 'Yeni tarif';
+}
+
+function editRecipe(recipeId) {
+  const recipe = recipes.find(item => item.id === recipeId);
+  if (!recipe) return;
+  elements.recipeId.value = recipe.id;
+  elements.titleInput.value = recipe.title;
+  elements.cultureInput.value = recipe.culture;
+  elements.mealInput.value = recipe.meal;
+  elements.prepTimeInput.value = recipe.prepTime;
+  elements.cookTimeInput.value = recipe.cookTime;
+  elements.servingsInput.value = recipe.servings;
+  elements.difficultyInput.value = recipe.difficulty || 'Kolay';
+  elements.descriptionInput.value = recipe.description || '';
+  elements.ingredientTagsInput.value = recipe.ingredientTags.join(', ');
+  elements.extraTagsInput.value = recipe.extraTags.join(', ');
+  elements.ingredientsInput.value = recipe.ingredients.join('\n');
+  elements.stepsInput.value = recipe.steps.join('\n');
+  pendingImage = recipe.image || '';
+  isRemovingImage = false;
+  updatePhotoPreview(pendingImage);
+  elements.formTitle.textContent = 'Tarifi düzenle';
+  elements.cancelEditButton.classList.remove('hidden');
+  closeModal(elements.recipeModal);
+  showPage('editor');
+}
+
+async function deleteRecipe(recipeId) {
+  const recipe = recipes.find(item => item.id === recipeId);
+  if (!recipe) return;
+  if (!window.confirm(`“${recipe.title}” tarifini silmek istediğinize emin misiniz?`)) return;
+  await storage.delete(recipeId);
+  recipes = recipes.filter(item => item.id !== recipeId);
+  closeModal(elements.recipeModal);
+  renderAll();
+  showToast('Tarif silindi.');
+}
+
+function clearFieldErrors() {
+  document.querySelectorAll('.field-error').forEach(node => { node.textContent = ''; });
+  document.querySelectorAll('.invalid').forEach(node => node.classList.remove('invalid'));
+}
+
+function setFieldError(id, message) {
+  const input = elements[id];
+  input.classList.add('invalid');
+  const error = document.querySelector(`[data-error-for="${id}"]`);
+  if (error) error.textContent = message;
+}
+
+function validateForm() {
+  clearFieldErrors();
+  const checks = [
+    ['titleInput', elements.titleInput.value.trim(), 'Tarif adını yazın.'],
+    ['cultureInput', elements.cultureInput.value.trim(), 'Mutfak veya kültür bilgisini yazın.'],
+    ['mealInput', elements.mealInput.value, 'Bir öğün seçin.'],
+    ['ingredientTagsInput', parseCommaList(elements.ingredientTagsInput.value).length, 'En az bir malzeme etiketi ekleyin.'],
+    ['ingredientsInput', parseLineList(elements.ingredientsInput.value).length, 'En az bir malzeme yazın.'],
+    ['stepsInput', parseLineList(elements.stepsInput.value).length, 'En az bir hazırlanış adımı yazın.']
+  ];
+  const invalid = checks.filter(([, value]) => !value);
+  invalid.forEach(([id, , message]) => setFieldError(id, message));
+  if (invalid.length) {
+    elements[invalid[0][0]].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    elements[invalid[0][0]].focus();
+    return false;
+  }
+  return true;
+}
+
+async function handleSubmit(event) {
+  event.preventDefault();
+  if (!validateForm()) { showToast('Zorunlu alanları kontrol edin.'); return; }
+  const now = new Date().toISOString();
+  const existing = recipes.find(item => item.id === elements.recipeId.value);
+  const image = isRemovingImage ? '' : (pendingImage || existing?.image || '');
+  const recipe = normalizeRecipe({
+    ...(existing || {}),
+    id: existing?.id || uid(),
+    title: elements.titleInput.value.trim(),
+    culture: elements.cultureInput.value.trim(),
+    meal: elements.mealInput.value,
+    description: elements.descriptionInput.value.trim(),
+    prepTime: elements.prepTimeInput.value,
+    cookTime: elements.cookTimeInput.value,
+    servings: elements.servingsInput.value,
+    difficulty: elements.difficultyInput.value,
+    ingredientTags: parseCommaList(elements.ingredientTagsInput.value),
+    extraTags: parseCommaList(elements.extraTagsInput.value),
+    ingredients: parseLineList(elements.ingredientsInput.value),
+    steps: parseLineList(elements.stepsInput.value),
+    image,
+    favorite: existing?.favorite || false,
+    eatCount: existing?.eatCount || 0,
+    lastEaten: existing?.lastEaten || null,
+    createdAt: existing?.createdAt || now,
+    updatedAt: now
+  });
+
+  try {
+    await saveRecipe(recipe);
+    resetEditor({ keepPage: false });
+    showPage('recipes');
+    showToast(existing ? 'Tarif güncellendi.' : 'Yeni tarif kaydedildi.');
+  } catch (error) {
+    console.error(error);
+    showToast('Tarif kaydedilemedi. Fotoğrafı küçültüp yeniden deneyin.');
+  }
+}
+
+async function compressImage(file) {
+  if (!file || !file.type.startsWith('image/')) throw new Error('Geçersiz görsel');
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+  const image = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Bu fotoğraf biçimi tarayıcı tarafından açılamadı.'));
+    img.src = dataUrl;
+  });
+  const maxSide = 1400;
+  const ratio = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+  const width = Math.max(1, Math.round(image.naturalWidth * ratio));
+  const height = Math.max(1, Math.round(image.naturalHeight * ratio));
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext('2d', { alpha: false });
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, width, height);
+  context.drawImage(image, 0, 0, width, height);
+  return canvas.toDataURL('image/jpeg', .82);
+}
+
+async function handlePhotoChange(file) {
+  if (!file) return;
+  try {
+    showToast('Fotoğraf hazırlanıyor…');
+    pendingImage = await compressImage(file);
+    isRemovingImage = false;
+    updatePhotoPreview(pendingImage);
+    showToast('Fotoğraf eklendi. Tarifi kaydetmeyi unutmayın.');
+  } catch (error) {
+    console.error(error);
+    showToast('Fotoğraf açılamadı. JPG, PNG veya WebP deneyin.');
+  } finally {
+    elements.photoInput.value = '';
+  }
+}
+
+function chooseRandomRecipe() {
+  if (!recipes.length) { showToast('Rastgele seçim için önce tarif ekleyin.'); return; }
+  let candidates = recipes;
+  if (recipes.length > 1 && currentRandomId) candidates = recipes.filter(item => item.id !== currentRandomId);
+  const recipe = candidates[Math.floor(Math.random() * candidates.length)];
+  currentRandomId = recipe.id;
+  elements.spotlightTitle.textContent = recipe.title;
+  elements.spotlightDescription.textContent = recipe.description || `${recipe.culture} mutfağından ${recipe.meal.toLocaleLowerCase('tr-TR')} önerisi.`;
+  elements.spotlightMeta.innerHTML = `<span>${escapeHtml(recipe.culture)}</span><span>${escapeHtml(recipe.meal)}</span><span>⏱ ${totalTime(recipe)} dk</span><span>👥 ${recipe.servings}</span>`;
+  elements.spotlightMeta.classList.remove('hidden');
+  elements.openRandomButton.classList.remove('hidden');
+  elements.randomRecipeButton.textContent = '🎲 Başka bir tarif seç';
+  elements.spotlightMedia.innerHTML = validImage(recipe.image)
+    ? `<img src="${recipe.image}" alt="${escapeHtml(recipe.title)} fotoğrafı">`
+    : `<span aria-hidden="true">${getRecipeEmoji(recipe)}</span>`;
+  elements.randomSpotlight.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function clearFilters() {
+  elements.searchInput.value = '';
+  elements.cultureFilter.value = '';
+  elements.mealFilter.value = '';
+  elements.ingredientFilter.value = '';
+  elements.favoriteFilter.value = '';
+  elements.sortFilter.value = 'newest';
+  renderRecipesPage();
+}
+
+function clearOneFilter(key) {
+  if (key === 'search') elements.searchInput.value = '';
+  if (key === 'culture') elements.cultureFilter.value = '';
+  if (key === 'meal') elements.mealFilter.value = '';
+  if (key === 'ingredient') elements.ingredientFilter.value = '';
+  if (key === 'favorite') elements.favoriteFilter.value = '';
+  renderRecipesPage();
+}
+
+
+function detectPlatform(urlString = '') {
+  try {
+    const host = new URL(urlString).hostname.toLowerCase().replace(/^www\./, '');
+    if (host === 'youtu.be' || host.endsWith('youtube.com')) return 'youtube';
+    if (host.endsWith('instagram.com')) return 'instagram';
+    if (host.endsWith('tiktok.com')) return 'tiktok';
+    if (host.endsWith('pinterest.com') || host === 'pin.it') return 'pinterest';
+    if (host.endsWith('facebook.com') || host === 'fb.watch') return 'facebook';
+    return 'web';
+  } catch { return ''; }
+}
+
+function canonicalizeSourceUrl(urlString = '') {
+  const safe = safeHttpUrl(urlString);
+  if (!safe) return '';
+  const url = new URL(safe);
+  const platform = detectPlatform(safe);
+  url.hash = '';
+  if (platform === 'youtube') {
+    let id = '';
+    if (url.hostname.toLowerCase().includes('youtu.be')) id = url.pathname.split('/').filter(Boolean)[0] || '';
+    else if (url.pathname.startsWith('/shorts/')) id = url.pathname.split('/')[2] || '';
+    else id = url.searchParams.get('v') || '';
+    return id ? `https://www.youtube.com/watch?v=${encodeURIComponent(id)}` : safe;
+  }
+  if (platform === 'instagram') {
+    url.search = '';
+    return `${url.origin}${url.pathname.replace(/\/+$/, '')}/`;
+  }
+  ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'fbclid', 'igshid', 'si'].forEach(key => url.searchParams.delete(key));
+  return url.href;
+}
+
+function decodeHtmlEntities(text = '') {
+  const area = document.createElement('textarea');
+  area.innerHTML = String(text);
+  return area.value;
+}
+
+function cleanSourceText(text = '') {
+  return decodeHtmlEntities(text)
+    .replace(/<br\s*\/?\s*>/gi, '\n')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\r/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+const SOCIAL_NOISE_PHRASES = [
+  'like', 'comment', 'comments', 'follow', 'subscribe', 'save this', 'share this', 'turn on notifications',
+  'link in bio', 'full recipe in bio', 'tag a friend', 'what do you think', 'let me know in the comments',
+  'beğen', 'beğenmeyi unutma', 'yorum yap', 'yorumlara yaz', 'takip et', 'takip etmeyi unutma', 'abone ol',
+  'kaydet', 'gönderiyi kaydet', 'paylaş', 'arkadaşını etiketle', 'bildirimleri aç', 'profilimdeki link',
+  'bio daki link', 'devamı profilde', 'daha fazlası için takip', 'kanalıma abone', 'sizce nasıl',
+  'reklam', 'iş birliği', 'işbirliği', 'sponsorlu', 'sponsored', 'ad collaboration'
+];
+
+function isSocialNoiseLine(line = '') {
+  const original = String(line).trim();
+  if (!original) return true;
+  const normalized = normalizeText(original).replace(/\s+/g, ' ').trim();
+  const words = normalized.split(' ').filter(Boolean);
+  if (/^(?:#\S+\s*){2,}$/u.test(original) || /^(?:@\S+\s*){2,}$/u.test(original)) return true;
+  if (/^(?:[❤♥👍🔥✨🙏👏😍🤤😋💬📌🔔➡️👉]+\s*)+$/u.test(original)) return true;
+  if (/^\d[\d.,kmb]*\s*(?:likes?|comments?|views?|beğeni|yorum|izlenme)$/i.test(normalized)) return true;
+  if (/^(?:like|comment|follow|subscribe|save|share|beğen|yorum|takip|abone|kaydet|paylaş)\b/i.test(normalized) && words.length <= 18) return true;
+  if (SOCIAL_NOISE_PHRASES.some(phrase => normalized.includes(normalizeText(phrase))) && words.length <= 28) return true;
+  if (/^(?:http|www\.|bit\.ly|linktr\.ee)/i.test(original)) return true;
+  return false;
+}
+
+function sanitizeSocialSource(text = '') {
+  const rawLines = cleanSourceText(text).split('\n').map(line => line.trim()).filter(Boolean);
+  const kept = [];
+  const removed = [];
+  for (const line of rawLines) {
+    const stripped = line
+      .replace(/(?:^|\s)#[\p{L}\p{N}_]+/gu, ' ')
+      .replace(/(?:^|\s)@[\p{L}\p{N}_.]+/gu, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+    if (isSocialNoiseLine(line) || !stripped) removed.push(line);
+    else kept.push(stripped);
+  }
+  return { cleanText: kept.join('\n').replace(/\n{3,}/g, '\n\n').trim(), removedLines: removed };
+}
+
+function splitDescriptionAndRecipe(text = '') {
+  const sanitized = sanitizeSocialSource(text);
+  const lines = sanitized.cleanText.split('\n').map(line => line.trim()).filter(Boolean);
+  const firstRecipeHeading = lines.findIndex(line => isIngredientHeading(line) || isStepHeading(line));
+  const descriptionLines = [];
+  const recipeLines = [];
+
+  if (firstRecipeHeading >= 0) {
+    descriptionLines.push(...lines.slice(0, firstRecipeHeading).filter(line => !isRecipeMetaLine(line)));
+    recipeLines.push(...lines.slice(firstRecipeHeading));
+  } else {
+    for (const line of lines) {
+      if (looksLikeIngredient(line) || looksLikeStep(line) || isRecipeMetaLine(line)) recipeLines.push(line);
+      else descriptionLines.push(line);
+    }
+    if (!recipeLines.length) recipeLines.push(...lines);
+  }
+
+  const descriptionText = descriptionLines
+    .filter(line => !looksLikeIngredient(line) && !looksLikeStep(line))
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return {
+    descriptionText,
+    recipeText: recipeLines.join('\n').trim(),
+    cleanText: sanitized.cleanText,
+    removedLines: sanitized.removedLines
+  };
+}
+
+async function fetchJsonWithTimeout(url, timeout = 11000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } finally { clearTimeout(timer); }
+}
+
+async function fetchMicrolinkMetadata(sourceUrl) {
+  const endpoint = `https://api.microlink.io/?url=${encodeURIComponent(sourceUrl)}`;
+  const payload = await fetchJsonWithTimeout(endpoint);
+  if (payload?.status && payload.status !== 'success') throw new Error(payload.message || 'Metadata alınamadı');
+  const data = payload?.data || {};
+  return {
+    title: data.title || '',
+    description: data.description || '',
+    creator: data.author || data.publisher || '',
+    image: data.image?.url || data.logo?.url || '',
+    publisher: data.publisher || '',
+    provider: data.publisher || ''
+  };
+}
+
+async function fetchNoembedMetadata(sourceUrl) {
+  const payload = await fetchJsonWithTimeout(`https://noembed.com/embed?url=${encodeURIComponent(sourceUrl)}`);
+  if (payload?.error) throw new Error(payload.error);
+  return {
+    title: payload.title || '',
+    description: payload.description || '',
+    creator: payload.author_name || '',
+    image: payload.thumbnail_url || '',
+    publisher: payload.provider_name || '',
+    provider: payload.provider_name || ''
+  };
+}
+
+async function fetchLinkMetadata(sourceUrl) {
+  const results = await Promise.allSettled([
+    fetchMicrolinkMetadata(sourceUrl),
+    fetchNoembedMetadata(sourceUrl)
+  ]);
+  const candidates = results
+    .filter(result => result.status === 'fulfilled')
+    .map(result => result.value)
+    .filter(result => result.title || result.description || result.image)
+    .sort((a, b) => ((b.description?.length || 0) + (b.title ? 80 : 0) + (b.image ? 40 : 0)) - ((a.description?.length || 0) + (a.title ? 80 : 0) + (a.image ? 40 : 0)));
+  if (candidates.length) return candidates[0];
+  const reason = results.find(result => result.status === 'rejected')?.reason;
+  throw reason || new Error('Bağlantı bilgileri alınamadı');
+}
+
+function textHasTerm(text = '', term = '') {
+  const haystack = ` ${normalizeText(text).replace(/[^a-z0-9]+/g, ' ').trim()} `;
+  const needle = ` ${normalizeText(term).replace(/[^a-z0-9]+/g, ' ').trim()} `;
+  return needle.trim() ? haystack.includes(needle) : false;
+}
+
+function isRecipeMetaLine(line = '') {
+  const normalized = normalizeText(line);
+  const hasMeta = /(\d+)\s*(kisilik|porsiyon|servings?|dk|dakika|min)|hazirlik\s*[:\-]?\s*\d+|pisirme\s*[:\-]?\s*\d+/.test(normalized);
+  const hasAction = actionLexicon.some(item => textHasTerm(normalized, item));
+  return hasMeta && !hasAction;
+}
+
+const ingredientLexicon = [
+  'tavuk','hindi','et','kıyma','balık','somon','ton balığı','karides','yumurta','süt','yoğurt','krema','tereyağı','peynir',
+  'un','şeker','tuz','karabiber','kimyon','kekik','pul biber','zeytinyağı','yağ','soğan','sarımsak','domates','biber','patates',
+  'havuç','kabak','patlıcan','mantar','ıspanak','brokoli','marul','avokado','limon','makarna','noodle','ramen','pirinç','bulgur',
+  'mercimek','nohut','fasulye','ekmek','yufka','lavaş','çikolata','kakao','vanilya','bal','sirke','soya sosu','salça'
+];
+
+const actionLexicon = [
+  'ekleyin','ekle','karıştırın','karıştır','pişirin','pişir','haşlayın','haşla','doğrayın','doğra','kavurun','kavur','soteleyin',
+  'çırpın','çırp','yoğurun','yoğur','bekletin','dinlendirin','servis edin','fırına','fırında','kızartın','dökün','yayın','çevirin',
+  'combine','cook','bake','mix','stir','boil','chop','serve','add','heat','fry'
+];
+
+function normalizeImportLines(text = '') {
+  return sanitizeSocialSource(text).cleanText
+    .replace(/\s+[•●▪◦]\s*/g, '\n• ')
+    .replace(/\s+(?=\d{1,2}[.)]\s+)/g, '\n')
+    .split('\n')
+    .map(line => line.replace(/^\s*[•●▪◦*–—-]\s*/, '').trim())
+    .filter(Boolean);
+}
+
+function isIngredientHeading(line = '') {
+  const value = normalizeText(line).replace(/[:：]/g, '').trim();
+  return /^(malzemeler|gerekli malzemeler|ingredients|ingredient list|icerik|içindekiler)$/.test(value);
+}
+
+function isStepHeading(line = '') {
+  const value = normalizeText(line).replace(/[:：]/g, '').trim();
+  return /^(yapilisi|hazirlanisi|tarifi|yapim asamalari|hazirlik|directions|method|preparation|instructions)$/.test(value);
+}
+
+function looksLikeIngredient(line = '') {
+  const normalized = normalizeText(line);
+  const quantity = /^(?:\d+(?:[.,/]\d+)?|[¼½¾⅓⅔]|bir|yarim)\s*(?:kg|g|gr|gram|ml|l|litre|su bardagi|cay bardagi|yemek kasigi|cay kasigi|tatli kasigi|adet|paket|demet|tutam|dilim|kase|cup|tbsp|tsp)?\b/i.test(normalized);
+  const ingredientWord = ingredientLexicon.some(item => textHasTerm(normalized, item));
+  const actionWord = actionLexicon.some(item => textHasTerm(normalized, item));
+  return (quantity || ingredientWord) && !actionWord && line.length < 150;
+}
+
+function looksLikeStep(line = '') {
+  const normalized = normalizeText(line);
+  return actionLexicon.some(item => textHasTerm(normalized, item)) || /^\d{1,2}[.)-]\s*/.test(line);
+}
+
+function uniqueCleanLines(lines = []) {
+  const seen = new Set();
+  return lines.map(line => line.replace(/^\d{1,2}[.)-]\s*/, '').trim()).filter(line => {
+    const key = normalizeText(line);
+    if (!key || seen.has(key)) return false;
+    seen.add(key); return true;
+  });
+}
+
+function extractRecipeSections(text = '') {
+  const lines = normalizeImportLines(text);
+  const ingredients = [];
+  const steps = [];
+  const other = [];
+  let mode = '';
+  for (const line of lines) {
+    if (isIngredientHeading(line)) { mode = 'ingredients'; continue; }
+    if (isStepHeading(line)) { mode = 'steps'; continue; }
+    if (/^#{2,}/.test(line) || /^https?:\/\//i.test(line) || isRecipeMetaLine(line)) continue;
+    if (mode === 'ingredients') { ingredients.push(line); continue; }
+    if (mode === 'steps') { steps.push(line); continue; }
+    other.push(line);
+  }
+
+  if (!ingredients.length) other.filter(looksLikeIngredient).forEach(line => ingredients.push(line));
+  if (!steps.length) other.filter(line => !ingredients.includes(line) && looksLikeStep(line)).forEach(line => steps.push(line));
+
+  if (!steps.length) {
+    const prose = other.filter(line => !ingredients.includes(line)).join(' ');
+    prose.split(/(?<=[.!?])\s+/).map(item => item.trim()).filter(item => item.length > 15).slice(0, 12).forEach(item => steps.push(item));
+  }
+  return { ingredients: uniqueCleanLines(ingredients), steps: uniqueCleanLines(steps) };
+}
+
+function inferTags(text = '') {
+  const normalized = normalizeText(text);
+  return uniqueSorted(ingredientLexicon.filter(item => textHasTerm(normalized, item))).slice(0, 12);
+}
+
+function inferCulture(text = '') {
+  const value = normalizeText(text);
+  const cultureMap = [
+    ['Japon', ['japon','sushi','ramen','miso','teriyaki']], ['Kore', ['kore','kimchi','gochujang','bibimbap']],
+    ['İtalyan', ['italyan','pizza','pasta','makarna','risotto','tiramisu']], ['Meksika', ['meksika','taco','burrito','quesadilla']],
+    ['Hint', ['hint','curry','masala','naan']], ['Çin', ['cin','wok','dumpling']], ['Tayland', ['tayland','thai','pad thai']],
+    ['Fransız', ['fransiz','croissant','ratatouille']], ['Türk', ['turk','mantı','kebap','mercimek','bulgur','börek','menemen']],
+    ['Akdeniz', ['akdeniz','zeytinyagli','humus']], ['Amerikan', ['amerikan','burger','pancake','brownie']]
+  ];
+  return cultureMap.find(([, keys]) => keys.some(key => textHasTerm(value, key)))?.[0] || 'Diğer';
+}
+
+function inferMeal(text = '') {
+  const value = normalizeText(text);
+  if (/(tatli|kek|kurabiye|brownie|tiramisu|puding|dessert)/.test(value)) return 'Tatlı';
+  if (/(kahvalti|menemen|omlet|pancake|tost)/.test(value)) return 'Kahvaltı';
+  if (/(corba|soup)/.test(value)) return 'Çorba';
+  if (/(smoothie|icecek|limonata|kahve)/.test(value)) return 'İçecek';
+  if (/(atistirmalik|snack|dip|cips)/.test(value)) return 'Atıştırmalık';
+  return 'Akşam yemeği';
+}
+
+function inferNumber(text, patterns, fallback) {
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return Number(match[1]);
+  }
+  return fallback;
+}
+
+function titleFromMetadata(title = '') {
+  const sanitized = sanitizeSocialSource(title).cleanText;
+  return sanitized
+    .replace(/\s*[|–—-]\s*(Instagram|YouTube|TikTok).*$/i, '')
+    .replace(/^.*?on (?:Instagram|YouTube|TikTok):\s*/i, '')
+    .replace(/(?:like|comment|follow|subscribe|beğen|yorum|takip|abone).*$/i, '')
+    .replace(/^['“]|['”]$/g, '')
+    .trim().slice(0, 80) || 'Sosyal medyadan tarif';
+}
+
+function buildRecipeDraft(metadata, sourceText, sourceUrl, platform) {
+  const rawSource = [metadata.description, sourceText].filter(Boolean).join('\n');
+  const separated = splitDescriptionAndRecipe(rawSource || metadata.title || '');
+  const combined = cleanSourceText([metadata.title, separated.cleanText].filter(Boolean).join('\n'));
+  const sections = extractRecipeSections(separated.recipeText || separated.cleanText || combined);
+  const ingredientTags = inferTags([combined, ...sections.ingredients].join(' '));
+  const durationText = normalizeText(combined);
+  const prepTime = inferNumber(durationText, [/(?:hazirlik|prep)[^\d]{0,12}(\d+)\s*(?:dk|dakika|min)/i], 10);
+  const cookTime = inferNumber(durationText, [/(?:pisirme|pisme|cook|firin)[^\d]{0,12}(\d+)\s*(?:dk|dakika|min)/i, /(\d+)\s*(?:dk|dakika|min)(?:da|de)?\s*(?:pisirin|pisiyor|firin)/i], 20);
+  const servings = inferNumber(durationText, [/(\d+)\s*(?:kisilik|porsiyon|servings?|person)/i], 2);
+  const fallbackDescription = sections.steps.length ? sections.steps[0] : '';
+  return {
+    title: titleFromMetadata(metadata.title),
+    culture: inferCulture(combined),
+    meal: inferMeal(combined),
+    prepTime,
+    cookTime,
+    servings: Math.max(1, servings || 2),
+    difficulty: 'Kolay',
+    description: (separated.descriptionText || fallbackDescription).replace(/\n+/g, ' ').slice(0, 260),
+    ingredientTags: ingredientTags.length ? ingredientTags : ['sosyal medya tarifi'],
+    extraTags: ['sosyal medyadan', platformLabel(platform).toLocaleLowerCase('tr-TR')],
+    ingredients: sections.ingredients,
+    steps: sections.steps,
+    image: isSafeImageUrl(metadata.image) ? metadata.image : '',
+    sourceType: 'social-media',
+    sourcePlatform: platform,
+    sourceUrl,
+    sourceCreator: metadata.creator || metadata.publisher || '',
+    sourceTitle: metadata.title || '',
+    sourceThumbnail: isSafeImageUrl(metadata.image) ? metadata.image : '',
+    importedAt: new Date().toISOString(),
+    parserReport: {
+      removedNoiseCount: separated.removedLines.length,
+      descriptionSeparated: Boolean(separated.descriptionText),
+      recipeLineCount: separated.recipeText ? separated.recipeText.split('\n').filter(Boolean).length : 0
+    }
+  };
+}
+
+function setImportStatus(type, title, message) {
+  elements.importStatus.className = `import-status ${type}`;
+  elements.importStatus.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(message)}</span>`;
+}
+
+function setImportLoading(loading) {
+  elements.analyzeImportButton.disabled = loading;
+  elements.analyzeImportButton.classList.toggle('button-loading', loading);
+  elements.analyzeImportButton.textContent = loading ? 'Analiz ediliyor…' : 'Bağlantıyı analiz et';
+}
+
+function fillImportPreview(draft) {
+  socialImportDraft = draft;
+  elements.importTitleInput.value = draft.title || '';
+  elements.importCultureInput.value = draft.culture || 'Diğer';
+  elements.importMealInput.value = draft.meal || 'Akşam yemeği';
+  elements.importPrepTimeInput.value = draft.prepTime ?? 10;
+  elements.importCookTimeInput.value = draft.cookTime ?? 20;
+  elements.importServingsInput.value = draft.servings ?? 2;
+  elements.importDifficultyInput.value = draft.difficulty || 'Kolay';
+  elements.importDescriptionInput.value = draft.description || '';
+  elements.importIngredientTagsInput.value = (draft.ingredientTags || []).join(', ');
+  elements.importExtraTagsInput.value = (draft.extraTags || []).join(', ');
+  elements.importIngredientsInput.value = (draft.ingredients || []).join('\n');
+  elements.importStepsInput.value = (draft.steps || []).join('\n');
+  elements.importSourceLink.href = draft.sourceUrl || '#';
+  elements.importSourceBadge.textContent = `${platformIcon(draft.sourcePlatform)} ${platformLabel(draft.sourcePlatform)}`;
+  elements.importSourceTitle.textContent = draft.sourceTitle || draft.title || 'Kaynak başlığı';
+  elements.importCreatorText.textContent = draft.sourceCreator ? `İçerik sahibi: ${draft.sourceCreator}` : 'İçerik sahibi bilgisi alınamadı.';
+  elements.importPreviewImage.innerHTML = validImage(draft.image)
+    ? `<img src="${escapeHtml(draft.image)}" alt="${escapeHtml(draft.title)} kaynak görseli">`
+    : `<span>${platformIcon(draft.sourcePlatform)}</span>`;
+  const report = draft.parserReport || {};
+  elements.importParserSummary.innerHTML = `<strong>Akıllı temizleme:</strong> ${Number(report.removedNoiseCount || 0)} sosyal medya satırı kaldırıldı. ${report.descriptionSeparated ? 'Açıklama, malzeme ve hazırlanış bölümlerinden ayrıldı.' : 'Açıklama alanı tarif metninden türetildi.'}`;
+  elements.importParserSummary.classList.remove('hidden');
+  elements.importPreview.classList.remove('hidden');
+  elements.importPreview.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function collectImportPreviewRecipe() {
+  const now = new Date().toISOString();
+  return normalizeRecipe({
+    ...(socialImportDraft || {}),
+    id: uid(),
+    title: elements.importTitleInput.value.trim(),
+    culture: elements.importCultureInput.value.trim(),
+    meal: elements.importMealInput.value,
+    prepTime: elements.importPrepTimeInput.value,
+    cookTime: elements.importCookTimeInput.value,
+    servings: elements.importServingsInput.value,
+    difficulty: elements.importDifficultyInput.value,
+    description: elements.importDescriptionInput.value.trim(),
+    ingredientTags: parseCommaList(elements.importIngredientTagsInput.value),
+    extraTags: parseCommaList(elements.importExtraTagsInput.value),
+    ingredients: parseLineList(elements.importIngredientsInput.value),
+    steps: parseLineList(elements.importStepsInput.value),
+    favorite: false,
+    eatCount: 0,
+    lastEaten: null,
+    createdAt: now,
+    updatedAt: now
+  });
+}
+
+function validateImportedRecipe(recipe) {
+  const missing = [];
+  if (!recipe.title) missing.push('tarif adı');
+  if (!recipe.culture) missing.push('mutfak/kültür');
+  if (!recipe.meal) missing.push('öğün');
+  if (!recipe.ingredientTags.length) missing.push('malzeme etiketi');
+  if (!recipe.ingredients.length) missing.push('malzemeler');
+  if (!recipe.steps.length) missing.push('hazırlanış adımları');
+  return missing;
+}
+
+async function handleSocialImport(event) {
+  event?.preventDefault();
+  const sourceUrl = canonicalizeSourceUrl(elements.importUrlInput.value);
+  if (!sourceUrl) { setImportStatus('error', 'Geçersiz bağlantı', 'http veya https ile başlayan geçerli bir bağlantı girin.'); return; }
+  const duplicate = recipes.find(recipe => canonicalizeSourceUrl(recipe.sourceUrl) === sourceUrl);
+  if (duplicate && !window.confirm(`Bu bağlantı “${duplicate.title}” adıyla daha önce kaydedilmiş. Yine de yeniden içe aktarılsın mı?`)) return;
+  const platform = detectPlatform(sourceUrl);
+  setImportLoading(true);
+  setImportStatus('loading', 'Bağlantı okunuyor', `${platformLabel(platform)} sayfasından başlık, açıklama ve görsel alınmaya çalışılıyor.`);
+  let metadata = { title: '', description: '', creator: '', image: '', publisher: '' };
+  let metadataLoaded = false;
+  try {
+    metadata = await fetchLinkMetadata(sourceUrl);
+    metadataLoaded = true;
+  } catch (error) {
+    console.warn('Otomatik metadata alınamadı:', error);
+  } finally { setImportLoading(false); }
+
+  const manualText = elements.importSourceTextInput.value.trim();
+  const draft = buildRecipeDraft(metadata, manualText, sourceUrl, platform);
+  fillImportPreview(draft);
+  const hasRecipeData = draft.ingredients.length && draft.steps.length;
+  if (metadataLoaded && hasRecipeData) setImportStatus('success', 'Tarif çıkarıldı', 'Kaynak bilgileri ve tarif alanları hazırlandı. Önizlemeyi kontrol edip kaydedin.');
+  else if (metadataLoaded) setImportStatus('warning', 'Kaynak bulundu, tarif eksik', 'Başlık veya görsel alındı; malzemeler ve adımlar için açıklama metnini yapıştırıp “Metni yeniden ayrıştır” seçeneğini kullanın.');
+  else if (manualText && hasRecipeData) setImportStatus('success', 'Metin ayrıştırıldı', 'Kaynak sayfası otomatik okunamadı ancak yapıştırılan açıklamadan tarif oluşturuldu.');
+  else setImportStatus('warning', 'Otomatik okuma tamamlanamadı', 'Gönderi açıklamasını üstteki alana yapıştırın; ardından “Metni yeniden ayrıştır” seçeneğine basın.');
+}
+
+function reanalyzeImportText() {
+  const sourceUrl = canonicalizeSourceUrl(elements.importUrlInput.value || socialImportDraft?.sourceUrl);
+  if (!sourceUrl) { setImportStatus('error', 'Bağlantı gerekli', 'Önce geçerli bir kaynak bağlantısı ekleyin.'); return; }
+  const metadata = {
+    title: socialImportDraft?.sourceTitle || socialImportDraft?.title || '',
+    description: socialImportDraft?.description || '',
+    creator: socialImportDraft?.sourceCreator || '',
+    image: socialImportDraft?.image || '',
+    publisher: socialImportDraft?.sourceCreator || ''
+  };
+  const draft = buildRecipeDraft(metadata, elements.importSourceTextInput.value, sourceUrl, detectPlatform(sourceUrl));
+  fillImportPreview(draft);
+  setImportStatus(draft.ingredients.length && draft.steps.length ? 'success' : 'warning', 'Metin yeniden ayrıştırıldı', draft.ingredients.length && draft.steps.length ? 'Malzemeler ve hazırlanış adımları güncellendi.' : 'Bazı alanlar bulunamadı; önizlemede elle tamamlayın.');
+}
+
+function resetSocialImport() {
+  elements.socialImportForm.reset();
+  elements.importPreview.classList.add('hidden');
+  elements.importParserSummary.classList.add('hidden');
+  socialImportDraft = null;
+  setImportStatus('info', 'Hazır', 'Bir bağlantı ekleyerek başlayın.');
+  setImportLoading(false);
+}
+
+async function saveImportedRecipe() {
+  if (!socialImportDraft) { showToast('Önce bir bağlantıyı analiz edin.'); return; }
+  const recipe = collectImportPreviewRecipe();
+  const missing = validateImportedRecipe(recipe);
+  if (missing.length) { showToast(`Eksik alanlar: ${missing.join(', ')}.`); return; }
+  try {
+    await saveRecipe(recipe);
+    const savedTitle = recipe.title;
+    resetSocialImport();
+    showPage('recipes');
+    showToast(`“${savedTitle}” diğer tariflerin yanına eklendi.`);
+  } catch (error) {
+    console.error(error);
+    showToast('İçe aktarılan tarif kaydedilemedi.');
+  }
+}
+
+/* ---------- Alışveriş listesi ---------- */
+function loadShoppingItems() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(SHOPPING_KEY) || '[]');
+    shoppingItems = Array.isArray(stored) ? stored.map(item => ({
+      id: item.id || uid(), text: String(item.text || '').trim(), checked: Boolean(item.checked),
+      recipeId: item.recipeId || null, createdAt: item.createdAt || new Date().toISOString()
+    })).filter(item => item.text) : [];
+  } catch { shoppingItems = []; }
+}
+
+function saveShoppingItems() {
+  try { localStorage.setItem(SHOPPING_KEY, JSON.stringify(shoppingItems)); }
+  catch { showToast('Alışveriş listesi bu oturumda çalışıyor; tarayıcı kalıcı kayda izin vermedi.'); }
+}
+
+function renderShoppingList() {
+  if (!elements.shoppingList) return;
+  const done = shoppingItems.filter(item => item.checked).length;
+  elements.shoppingCountBadge.textContent = `${shoppingItems.length} madde · ${done} tamamlandı`;
+  elements.shoppingList.innerHTML = shoppingItems.length ? shoppingItems.map(item => `
+    <div class="shopping-item${item.checked ? ' checked' : ''}" data-shopping-id="${escapeHtml(item.id)}">
+      <input id="shopping-${escapeHtml(item.id)}" type="checkbox" ${item.checked ? 'checked' : ''} aria-label="${escapeHtml(item.text)} maddesini işaretle">
+      <label for="shopping-${escapeHtml(item.id)}">${escapeHtml(item.text)}</label>
+      <button class="shopping-delete" type="button" aria-label="${escapeHtml(item.text)} maddesini sil">×</button>
+    </div>`).join('') : '<div class="shopping-empty">Liste boş. Bir madde yazın veya tarif içinden malzeme ekleyin.</div>';
+}
+
+function addShoppingItems(items, recipeId = null) {
+  const existing = new Set(shoppingItems.map(item => normalizeText(item.text)));
+  let added = 0;
+  items.map(item => typeof item === 'string'
+    ? { text: item.trim(), checked: false }
+    : { text: String(item?.text || '').trim(), checked: Boolean(item?.checked) }
+  ).filter(item => item.text).forEach(item => {
+    const key = normalizeText(item.text);
+    if (existing.has(key)) return;
+    shoppingItems.push({ id: uid(), text: item.text, checked: item.checked, recipeId, createdAt: new Date().toISOString() });
+    existing.add(key); added += 1;
+  });
+  saveShoppingItems();
+  renderShoppingList();
+  return added;
+}
+
+function openIngredientPicker(recipeId) {
+  const recipe = recipes.find(item => item.id === recipeId);
+  if (!recipe) return;
+  ingredientPickerRecipeId = recipeId;
+  elements.ingredientPickerSubtitle.textContent = `“${recipe.title}” için bütün malzemeler aktarılacak. Evde bulunanları işaretleyin; diğerleri alınacak madde olarak kalır.`;
+  elements.ingredientPickerList.innerHTML = recipe.ingredients.map((ingredient, index) => `
+    <label class="ingredient-picker-item">
+      <input type="checkbox" value="${index}" checked>
+      <span>${escapeHtml(ingredient)}</span>
+    </label>`).join('');
+  openModal(elements.ingredientPickerModal);
+}
+
+function addSelectedRecipeIngredients() {
+  const recipe = recipes.find(item => item.id === ingredientPickerRecipeId);
+  if (!recipe) return;
+  const states = new Map([...elements.ingredientPickerList.querySelectorAll('input')]
+    .map(input => [Number(input.value), Boolean(input.checked)]));
+  const items = recipe.ingredients.map((text, index) => ({ text, checked: states.get(index) || false }));
+  const added = addShoppingItems(items, recipe.id);
+  closeModal(elements.ingredientPickerModal);
+  closeModal(elements.recipeModal);
+  showPage('shopping');
+  showToast(`${added} yeni malzeme eklendi. İşaretlenenler tamamlandı olarak kaydedildi.`);
+}
+
+/* ---------- Tarif oyunu ---------- */
+const GAME_PANTRY_SEED = [
+  ['zeytinyağı','Yağlar','🫒'], ['ayçiçek yağı','Yağlar','🫗'], ['tereyağı','Süt ürünleri','🧈'],
+  ['süt','Süt ürünleri','🥛'], ['yoğurt','Süt ürünleri','🥣'], ['krema','Süt ürünleri','🥛'], ['peynir','Süt ürünleri','🧀'],
+  ['tavuk','Etler','🍗'], ['dana eti','Etler','🥩'], ['kıyma','Etler','🥩'], ['balık','Etler','🐟'], ['somon','Etler','🐟'], ['karides','Etler','🦐'], ['yumurta','Etler','🥚'],
+  ['domates','Sebzeler','🍅'], ['soğan','Sebzeler','🧅'], ['sarımsak','Sebzeler','🧄'], ['biber','Sebzeler','🫑'], ['patates','Sebzeler','🥔'], ['havuç','Sebzeler','🥕'], ['kabak','Sebzeler','🥒'], ['patlıcan','Sebzeler','🍆'], ['mantar','Sebzeler','🍄'], ['ıspanak','Sebzeler','🥬'], ['brokoli','Sebzeler','🥦'], ['lahana','Sebzeler','🥬'],
+  ['limon','Meyveler','🍋'], ['lime','Meyveler','🍋'], ['avokado','Meyveler','🥑'], ['elma','Meyveler','🍎'], ['yaban mersini','Meyveler','🫐'],
+  ['un','Kuru gıdalar','🌾'], ['şeker','Kuru gıdalar','🍚'], ['pirinç','Kuru gıdalar','🍚'], ['bulgur','Kuru gıdalar','🌾'], ['makarna','Kuru gıdalar','🍝'], ['noodle','Kuru gıdalar','🍜'], ['nohut','Kuru gıdalar','🫘'], ['mercimek','Kuru gıdalar','🫘'], ['fasulye','Kuru gıdalar','🫘'], ['ekmek','Kuru gıdalar','🍞'],
+  ['tuz','Baharatlar','🧂'], ['karabiber','Baharatlar','🌑'], ['kimyon','Baharatlar','🌿'], ['kekik','Baharatlar','🌿'], ['pul biber','Baharatlar','🌶️'], ['baharat','Baharatlar','🌿'],
+  ['şarap','Alkoller','🍷'], ['bira','Alkoller','🍺'], ['rom','Alkoller','🥃'],
+  ['soya sosu','Soslar','🥢'], ['salça','Soslar','🥫'], ['sirke','Soslar','🍶'], ['bal','Soslar','🍯'], ['çikolata','Tatlı malzemeleri','🍫'], ['kakao','Tatlı malzemeleri','🍫']
+].map(([name, category, emoji]) => ({ name, category, emoji }));
+
+const GAME_CATEGORY_ORDER = ['Yağlar','Sebzeler','Meyveler','Süt ürünleri','Etler','Alkoller','Kuru gıdalar','Baharatlar','Soslar','Tatlı malzemeleri','Diğer'];
+const GAME_ACTION_LABELS = { cut: 'doğradı', mix: 'karıştırdı', add: 'ekledi / döktü', stove: 'ocakta pişirdi', oven: 'fırında pişirdi', wait: 'bekletti', season: 'baharatladı', serve: 'servis etti' };
+
+function canonicalIngredientName(line = '') {
+  let text = normalizeText(line)
+    .replace(/^\s*(?:\d+(?:[.,/]\d+)?|[¼½¾⅓⅔]|bir|yarim|yarım)\s*/i, '')
+    .replace(/^(?:kg|g|gr|gram|ml|l|litre|su bardagi|cay bardagi|yemek kasigi|cay kasigi|tatli kasigi|adet|paket|demet|tutam|dilim|kase|cup|tbsp|tsp|olcu)\s+/i, '')
+    .replace(/\([^)]*\)/g, ' ')
+    .replace(/\b(?:ince|iri|kucuk|buyuk|dogranmis|rendelenmis|haslanmis|istege gore|yaklasik)\b/g, ' ')
+    .replace(/\s+/g, ' ').trim();
+  const known = [...GAME_PANTRY_SEED].sort((a,b) => b.name.length - a.name.length).find(item => textHasTerm(text, item.name));
+  return (known?.name || text || normalizeText(line)).trim();
+}
+
+function ingredientKey(value = '') { return normalizeText(canonicalIngredientName(value)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+
+function categorizeIngredient(name = '') {
+  const value = normalizeText(name);
+  const found = GAME_PANTRY_SEED.find(item => textHasTerm(value, item.name));
+  if (found) return found.category;
+  if (/(sebze|maydanoz|feslegen|marul|salatalik)/.test(value)) return 'Sebzeler';
+  if (/(meyve|portakal|muz|cilek)/.test(value)) return 'Meyveler';
+  if (/(sut|peynir|yogurt|krema|tereyagi)/.test(value)) return 'Süt ürünleri';
+  if (/(et|tavuk|balik|somon|karides|kiyma|hindi|yumurta)/.test(value)) return 'Etler';
+  if (/(yag|zeytinyagi)/.test(value)) return 'Yağlar';
+  if (/(sarap|bira|rom|viski|rakı|raki)/.test(value)) return 'Alkoller';
+  if (/(tuz|biber|baharat|kimyon|kekik|zencefil|tarçın|tarcin)/.test(value)) return 'Baharatlar';
+  if (/(sos|salca|sirke|bal)/.test(value)) return 'Soslar';
+  if (/(un|pirinc|bulgur|makarna|noodle|nohut|mercimek|fasulye|ekmek|yufka)/.test(value)) return 'Kuru gıdalar';
+  return 'Diğer';
+}
+
+function ingredientEmoji(name = '') {
+  const value = normalizeText(name);
+  const found = [...GAME_PANTRY_SEED].sort((a,b) => b.name.length - a.name.length).find(item => textHasTerm(value, item.name));
+  return found?.emoji || (/(sos|sivi|su)/.test(value) ? '🫙' : '🥫');
+}
+
+function inferGameAction(step = '') {
+  const text = normalizeText(step);
+  if (/(servis|sunum|tabaga al|tabaga aktar|serve|garniturle)/.test(text)) return 'serve';
+  if (/(beklet|dinlendir|sogut|mayalan|marine et|marinasyon|wait|rest|dakika bek|saat bek)/.test(text)) return 'wait';
+  if (/(firin|bake|roast|graten|firinla)/.test(text)) return 'oven';
+  if (/(hasla|kavur|sotele|kizart|muhurle|izgara|ocak|tava|tencere|kaynat|pisir|boil|fry|cook|saute|simmer)/.test(text)) return 'stove';
+  if (/(dogra|kes|julienne|julyen|brunoise|batonnet|kup|dilim|halka|capraz|ince kiy|rendele|soy|chop|slice|dice|mince|grate|peel)/.test(text)) return 'cut';
+  if (/(karistir|cirp|yogur|blend|harmanla|mix|stir|whisk|knead|fold)/.test(text)) return 'mix';
+  if (/(baharat|tuz|karabiber|tatlandir|season|kekik|kimyon|pul biber)/.test(text)) return 'season';
+  if (/(ekle|dok|koy|kir|yay|kapla|ilave|serp|add|pour|crack|spread|combine)/.test(text)) return 'add';
+  return 'mix';
+}
+
+function inferCutTechnique(step = '') {
+  const text = normalizeText(step);
+  if (/(julienne|julyen)/.test(text)) return 'julienne';
+  if (/(brunoise|kup|küp|dice)/.test(text)) return 'dice';
+  if (/(dilim|halka|capraz|slice|ring)/.test(text)) return 'slice';
+  if (/(ince kiy|kiy|mince)/.test(text)) return 'mince';
+  return 'chop';
+}
+
+const GAME_STATION_NAMES = {
+  cut: 'Kesme tahtası', mix: 'Karıştırma kabı', add: 'Ekleme alanı', stove: 'Ocak',
+  oven: 'Fırın', wait: 'Zaman', season: 'Baharatlık', serve: 'Servis'
+};
+const CUT_TECHNIQUE_NAMES = { slice: 'Dilimleme', dice: 'Küp doğrama', julienne: 'Jülyen kesim', mince: 'İnce kıyım', chop: 'Normal doğrama' };
+
+function extractStepDuration(step = '') {
+  const text = normalizeText(step);
+  const hour = text.match(/(\d+(?:[.,]\d+)?)\s*(saat|hour)/);
+  if (hour) return `${hour[1]} saat`;
+  const minute = text.match(/(\d+(?:[.,]\d+)?)\s*(dakika|dk|minute|min)/);
+  if (minute) return `${minute[1]} dakika`;
+  return '';
+}
+
+function extractStepTemperature(step = '') {
+  const match = String(step).match(/(\d{2,3})\s*(?:°\s*)?(?:c|derece)/i);
+  return match ? `${match[1]} °C` : '';
+}
+
+function inferActionMethod(step = '', action = inferGameAction(step)) {
+  const text = normalizeText(step);
+  if (action === 'cut') return CUT_TECHNIQUE_NAMES[inferCutTechnique(step)];
+  if (action === 'mix') {
+    if (/(cirp|whisk)/.test(text)) return 'Çırpma';
+    if (/(yogur|knead)/.test(text)) return 'Yoğurma';
+    if (/(harman|fold)/.test(text)) return 'Harmanlama';
+    return 'Karıştırma';
+  }
+  if (action === 'add') {
+    if (/(kir|crack)/.test(text)) return 'Kırarak ekleme';
+    if (/(dok|pour)/.test(text)) return 'Dökerek ekleme';
+    if (/(yay|spread)/.test(text)) return 'Yayma / kaplama';
+    if (/(serp)/.test(text)) return 'Serpme';
+    return 'Malzeme ekleme';
+  }
+  if (action === 'stove') {
+    if (/(hasla|kaynat|boil)/.test(text)) return 'Haşlama / kaynatma';
+    if (/(sotele|saute)/.test(text)) return 'Soteleme';
+    if (/(kizart|fry)/.test(text)) return 'Kızartma';
+    if (/(kavur)/.test(text)) return 'Kavurma';
+    if (/(muhurle)/.test(text)) return 'Mühürleme';
+    if (/(izgara)/.test(text)) return 'Izgara';
+    return 'Ocakta pişirme';
+  }
+  if (action === 'oven') return extractStepTemperature(step) ? `Fırında pişirme · ${extractStepTemperature(step)}` : 'Fırında pişirme';
+  if (action === 'wait') return extractStepDuration(step) ? `Bekleme · ${extractStepDuration(step)}` : 'Bekleme / dinlendirme';
+  if (action === 'season') return 'Baharatlandırma';
+  if (action === 'serve') return 'Tabağa alma / servis';
+  return '';
+}
+
+function gameStepGuidance(step = '') {
+  const action = inferGameAction(step);
+  const station = GAME_STATION_NAMES[action] || 'Mutfak istasyonu';
+  const method = inferActionMethod(step, action);
+  let heat = '';
+  const text = normalizeText(step);
+  if (/(kisik ates|dusuk ates|low heat)/.test(text)) heat = 'Kısık ateş';
+  else if (/(orta ates|medium heat)/.test(text)) heat = 'Orta ateş';
+  else if (/(yuksek ates|harli ates|high heat)/.test(text)) heat = 'Yüksek ateş';
+  const parts = [`Kullanılacak özellik: ${station}`];
+  if (method) parts.push(`Yöntem: ${method}`);
+  if (heat) parts.push(`Isı: ${heat}`);
+  if (action === 'wait') parts.push('Zorunlu: Zaman istasyonuna dokun ve “Zamanı ileri al”ı kullan');
+  return { action, text: parts.join(' · ') };
+}
+
+function highlightRecommendedStation(action) {
+  document.querySelectorAll('.kitchen-station[data-game-action]').forEach(button => {
+    button.classList.toggle('recommended', button.dataset.gameAction === action);
+  });
+}
+
+function buildGamePantry(recipe) {
+  const required = recipe.ingredients.map(line => ({
+    key: ingredientKey(line), name: canonicalIngredientName(line), original: line,
+    category: categorizeIngredient(line), emoji: ingredientEmoji(line), required: true
+  })).filter(item => item.key);
+  const unique = new Map();
+  required.forEach(item => { if (!unique.has(item.key)) unique.set(item.key, item); });
+  return { required: [...unique.values()], entries: [...unique.values()] };
+}
+
+function createGameRecipeCard(recipe) {
+  const visual = validImage(recipe.image) ? `<img src="${recipe.image}" alt="${escapeHtml(recipe.title)}">` : getRecipeEmoji(recipe);
+  return `<article class="game-recipe-card" data-game-recipe-id="${escapeHtml(recipe.id)}">
+    <div class="game-recipe-visual">${visual}</div>
+    <div class="game-recipe-body"><h3>${escapeHtml(recipe.title)}</h3><p>${recipe.ingredients.length} malzeme · ${recipe.steps.length} oynanabilir adım</p><div class="tag-row"><span class="tag">${escapeHtml(recipe.culture)}</span><span class="tag alt">${escapeHtml(recipe.difficulty)}</span></div><button class="primary-button" type="button" data-start-game="${escapeHtml(recipe.id)}">🎮 Oyunu başlat</button></div>
+  </article>`;
+}
+
+function renderGameRecipeList() {
+  if (!elements.gameRecipeList) return;
+  const search = normalizeText(elements.gameSearchInput?.value || '');
+  const filtered = recipes.filter(recipe => !search || normalizeText([recipe.title, recipe.culture, recipe.meal, ...recipe.ingredientTags].join(' ')).includes(search));
+  elements.gameRecipeList.innerHTML = filtered.length ? filtered.map(createGameRecipeCard).join('') : emptyState('Oynanacak tarif bulunamadı', 'Aramayı değiştirin veya yeni bir tarif ekleyin.');
+}
+
+function startRecipeGame(recipeId) {
+  const recipe = recipes.find(item => item.id === recipeId);
+  if (!recipe) return;
+  const pantry = buildGamePantry(recipe);
+  gameState = {
+    recipeId, phase: 'pantry', pantryEntries: pantry.entries, requiredIngredients: pantry.required,
+    selectedIngredients: new Set(), ingredientErrors: [], currentStep: 0, actions: [], busy: false,
+    pendingWait: false, cutTechnique: null, cutHits: new Set()
+  };
+  closeModal(elements.recipeModal);
+  showPage('game');
+  elements.gameSelector.classList.add('hidden');
+  elements.gameShell.classList.remove('hidden');
+  elements.pantryView.classList.remove('hidden');
+  elements.kitchenView.classList.add('hidden');
+  elements.gameResult.className = 'game-result hidden';
+  elements.cuttingMinigame.classList.add('hidden');
+  elements.gameRecipeTitle.textContent = recipe.title;
+  elements.gameRecipeEmoji.textContent = getRecipeEmoji(recipe);
+  elements.gameActionLog.innerHTML = '';
+  setGameMessage('info', 'Raflarda yalnızca bu tarifte geçen malzemeler bulunuyor. Gerekli olanları seçip masaya koyun. Tarif kitabını dilediğiniz an açabilirsiniz.');
+  renderGameRecipeBook();
+  renderPantry();
+  updateGameProgress();
+}
+
+function exitGame() {
+  closeModal(elements.gameRecipeBookModal);
+  gameState = null;
+  elements.gameShell.classList.add('hidden');
+  elements.gameSelector.classList.remove('hidden');
+  elements.cuttingMinigame.classList.add('hidden');
+  renderGameRecipeList();
+}
+
+function renderPantry() {
+  if (!gameState) return;
+  const groups = new Map();
+  gameState.pantryEntries.forEach(item => {
+    if (!groups.has(item.category)) groups.set(item.category, []);
+    groups.get(item.category).push(item);
+  });
+  const categories = [...groups.keys()].sort((a,b) => (GAME_CATEGORY_ORDER.indexOf(a) < 0 ? 99 : GAME_CATEGORY_ORDER.indexOf(a)) - (GAME_CATEGORY_ORDER.indexOf(b) < 0 ? 99 : GAME_CATEGORY_ORDER.indexOf(b)));
+  elements.pantryShelves.innerHTML = categories.map(category => `<section class="pantry-shelf"><h3>${escapeHtml(category)}</h3><div class="shelf-items">${groups.get(category).map(item => `<button class="pantry-item${gameState.selectedIngredients.has(item.key) ? ' selected' : ''}" type="button" data-pantry-key="${escapeHtml(item.key)}"><span>${item.emoji}</span><b title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</b></button>`).join('')}</div></section>`).join('');
+  renderSelectedIngredientTray();
+}
+
+function renderSelectedIngredientTray() {
+  if (!gameState) return;
+  const selected = gameState.pantryEntries.filter(item => gameState.selectedIngredients.has(item.key));
+  elements.selectedIngredientTray.innerHTML = selected.length ? selected.map(item => `<span class="selected-ingredient-chip">${item.emoji} ${escapeHtml(item.name)}</span>`).join('') : '<span class="selected-ingredient-chip">Henüz seçim yok</span>';
+}
+
+function confirmPantrySelection() {
+  if (!gameState || !gameState.selectedIngredients.size) { showToast('Önce raflardan malzeme seçin.'); return; }
+  const requiredKeys = new Set(gameState.requiredIngredients.map(item => item.key));
+  const selectedKeys = gameState.selectedIngredients;
+  const missing = gameState.requiredIngredients.filter(item => !selectedKeys.has(item.key)).map(item => item.name);
+  const extra = gameState.pantryEntries.filter(item => selectedKeys.has(item.key) && !requiredKeys.has(item.key)).map(item => item.name);
+  gameState.ingredientErrors = [
+    ...missing.map(name => `Eksik malzeme: ${name}`),
+    ...extra.map(name => `Gereksiz malzeme seçildi: ${name}`)
+  ];
+  gameState.phase = 'kitchen';
+  elements.pantryView.classList.add('hidden');
+  elements.kitchenView.classList.remove('hidden');
+  const selected = gameState.pantryEntries.filter(item => selectedKeys.has(item.key));
+  elements.gameTableIngredients.innerHTML = selected.map(item => `<span class="game-table-ingredient">${item.emoji} ${escapeHtml(item.name)}</span>`).join('');
+  setGameMessage('info', 'Malzemeler masada. Görev kartı sıradaki işlem için hangi mutfak özelliğini kullanmanız gerektiğini gösterecek.');
+  renderKitchenStep();
+}
+
+function currentGameRecipe() { return gameState ? recipes.find(item => item.id === gameState.recipeId) : null; }
+
+function renderGameRecipeBook() {
+  const recipe = currentGameRecipe();
+  if (!recipe || !elements.gameRecipeBookContent) return;
+  const activeStep = gameState?.phase === 'kitchen' ? gameState.currentStep : -1;
+  const source = safeHttpUrl(recipe.sourceUrl || '');
+  elements.gameRecipeBookContent.innerHTML = `
+    <section class="recipe-book-page">
+      <p class="eyebrow">Lezzet Defteri</p>
+      <h2 id="gameRecipeBookTitle">${escapeHtml(recipe.title)}</h2>
+      <div class="recipe-book-meta">
+        <span>${escapeHtml(recipe.culture || 'Genel')}</span>
+        <span>${escapeHtml(recipe.meal || 'Öğün')}</span>
+        <span>${Number(recipe.servings) || 1} porsiyon</span>
+        <span>${(Number(recipe.prepTime) || 0) + (Number(recipe.cookTime) || 0)} dk</span>
+      </div>
+      ${recipe.description ? `<p>${escapeHtml(recipe.description)}</p>` : ''}
+      <h3>Malzemeler</h3>
+      <ul>${recipe.ingredients.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>
+      ${source ? `<p class="recipe-book-note">Kaynak: <a href="${escapeHtml(source)}" target="_blank" rel="noopener noreferrer">Orijinal tarifi aç</a></p>` : '<p class="recipe-book-note">Bu kitap oyun sırasında her an yeniden açılabilir.</p>'}
+    </section>
+    <section class="recipe-book-page">
+      <p class="eyebrow">Hazırlanış</p>
+      <h3>Tarif adımları</h3>
+      <ol>${recipe.steps.map((step,index) => `<li class="${index === activeStep ? 'current-book-step' : ''}">${escapeHtml(step)}<br><small>${escapeHtml(gameStepGuidance(step).text)}</small></li>`).join('')}</ol>
+    </section>`;
+}
+
+function openGameRecipeBook() {
+  if (!currentGameRecipe()) return;
+  renderGameRecipeBook();
+  openModal(elements.gameRecipeBookModal);
+}
+
+
+function renderKitchenStep() {
+  const recipe = currentGameRecipe();
+  if (!gameState || !recipe) return;
+  if (gameState.currentStep >= recipe.steps.length) { finishGame(); return; }
+  const step = recipe.steps[gameState.currentStep];
+  const guidance = gameStepGuidance(step);
+  elements.gameStepCounter.textContent = `Adım ${gameState.currentStep + 1} / ${recipe.steps.length}`;
+  elements.gameStepText.textContent = step;
+  elements.gameStepHint.innerHTML = `<strong>Sıradaki görev:</strong> ${escapeHtml(guidance.text)}`;
+  elements.advanceTimeButton.classList.add('hidden');
+  gameState.pendingWait = false;
+  highlightRecommendedStation(guidance.action);
+  renderGameRecipeBook();
+  updateGameProgress();
+}
+
+function updateGameProgress() {
+  const recipe = currentGameRecipe();
+  let percentage = 5;
+  let label = 'Malzeme seçimi';
+  if (gameState?.phase === 'kitchen' && recipe) {
+    percentage = 15 + (gameState.currentStep / Math.max(1, recipe.steps.length)) * 80;
+    label = `Adım ${Math.min(gameState.currentStep + 1, recipe.steps.length)} / ${recipe.steps.length}`;
+  }
+  if (gameState?.phase === 'result') { percentage = 100; label = 'Sonuç'; }
+  elements.gameProgressBar.style.width = `${Math.min(100, percentage)}%`;
+  elements.gameProgressText.textContent = label;
+}
+
+function setGameMessage(type, message) {
+  elements.gameMessage.className = `game-message ${type}`;
+  elements.gameMessage.textContent = message;
+}
+
+function addGameLog(stepIndex, expected, chosen, correct, extra = '') {
+  const recipe = currentGameRecipe();
+  const step = recipe?.steps[stepIndex] || '';
+  elements.gameActionLog.insertAdjacentHTML('beforeend', `<div class="game-log-item ${correct ? 'ok' : 'bad'}"><span>${correct ? '✓' : '!'}</span><div><strong>${stepIndex + 1}. adım:</strong> ${escapeHtml(GAME_ACTION_LABELS[chosen] || chosen)}${extra ? ` · ${escapeHtml(extra)}` : ''}<br><small>${escapeHtml(step)}</small></div></div>`);
+  elements.gameActionLog.scrollTop = elements.gameActionLog.scrollHeight;
+}
+
+function animationDescriptor(action, step = '') {
+  const text = normalizeText(step);
+  if (action === 'add' && /(yumurta|kir)/.test(text)) return { emoji: '🥚', label: 'Yumurta kırılıyor', cls: 'crack' };
+  if (action === 'add' && /(sut|krema|sos|dok)/.test(text)) return { emoji: '🥛', label: 'Malzeme dökülüyor', cls: 'pour' };
+  if (action === 'cut') return { emoji: /(et|tavuk|kiyma)/.test(text) ? '🥩' : '🥕', label: 'Malzeme kesiliyor', cls: 'cut' };
+  if (action === 'mix') return { emoji: '🥣', label: 'Karıştırılıyor', cls: 'mix' };
+  if (action === 'stove') return { emoji: '🍳', label: 'Ocakta pişiyor', cls: 'stove' };
+  if (action === 'oven') return { emoji: '♨️', label: 'Fırında pişiyor', cls: 'oven' };
+  if (action === 'wait') return { emoji: '⏱️', label: 'Zaman ilerliyor', cls: 'wait' };
+  if (action === 'season') return { emoji: '🧂', label: 'Baharat ekleniyor', cls: 'season' };
+  if (action === 'serve') return { emoji: '🍽️', label: 'Servis ediliyor', cls: 'serve' };
+  return { emoji: '🥄', label: 'Malzeme ekleniyor', cls: 'pour' };
+}
+
+function playGameAnimation(action, step = '') {
+  clearTimeout(animationTimer);
+  const descriptor = animationDescriptor(action, step);
+  elements.gameAnimationStage.innerHTML = `<div class="action-animation ${descriptor.cls}"><span>${descriptor.emoji}</span><b>${descriptor.label}</b></div>`;
+  elements.gameAnimationStage.classList.add('playing');
+  animationTimer = setTimeout(() => {
+    elements.gameAnimationStage.classList.remove('playing');
+    elements.gameAnimationStage.innerHTML = '';
+  }, 760);
+}
+
+function handleKitchenAction(action) {
+  const recipe = currentGameRecipe();
+  if (!gameState || !recipe || gameState.busy || gameState.phase !== 'kitchen') return;
+  const step = recipe.steps[gameState.currentStep];
+  const expected = inferGameAction(step);
+
+  if (expected === 'wait' && action !== 'wait') {
+    highlightRecommendedStation('wait');
+    setGameMessage('warning', 'Bu tarif adımı bekleme içeriyor. Devam etmek için önce “Zaman” istasyonuna dokunun, ardından “Zamanı ileri al” düğmesini kullanın.');
+    return;
+  }
+  if (gameState.pendingWait) {
+    setGameMessage('warning', 'Bekleme işlemi başlatıldı. Bu adımı tamamlamak için “Zamanı ileri al” düğmesine basın.');
+    return;
+  }
+  if (action === 'cut') { openCuttingGame(); return; }
+  if (action === 'wait') {
+    gameState.pendingWait = true;
+    gameState.pendingAction = action;
+    elements.advanceTimeButton.classList.remove('hidden');
+    const duration = extractStepDuration(step);
+    setGameMessage('warning', `${duration ? `${duration} bekleme` : 'Bekleme'} aşaması başlatıldı. Gerçek zamanlı beklemeden tamamlamak için “Zamanı ileri al” düğmesine basın.`);
+    return;
+  }
+  commitGameAction(action);
+}
+
+function commitGameAction(chosenAction, technique = null) {
+  const recipe = currentGameRecipe();
+  if (!gameState || !recipe || gameState.busy) return;
+  const stepIndex = gameState.currentStep;
+  const step = recipe.steps[stepIndex];
+  const expected = inferGameAction(step);
+  const expectedTechnique = expected === 'cut' ? inferCutTechnique(step) : null;
+  const correct = expected === chosenAction && (!expectedTechnique || expectedTechnique === technique);
+  gameState.actions.push({ stepIndex, step, expected, chosen: chosenAction, technique, expectedTechnique, correct });
+  addGameLog(stepIndex, expected, chosenAction, correct, technique ? `Teknik: ${technique}` : '');
+  playGameAnimation(chosenAction, step);
+  gameState.busy = true;
+  setGameMessage(correct ? 'success' : 'warning', correct ? 'Aşama doğru uygulandı.' : 'Seçiminiz kaydedildi; tarifin sonunda tüm aşamalar birlikte kontrol edilecek.');
+  setTimeout(() => {
+    if (!gameState) return;
+    gameState.currentStep += 1;
+    gameState.busy = false;
+    renderKitchenStep();
+  }, 800);
+}
+
+function openCuttingGame() {
+  const recipe = currentGameRecipe();
+  if (!gameState || !recipe) return;
+  const step = recipe.steps[gameState.currentStep];
+  gameState.cutTechnique = null;
+  gameState.cutHits = new Set();
+  elements.cuttingInstruction.textContent = step;
+  elements.cutTechniqueButtons.innerHTML = [
+    ['slice','Dilim'], ['dice','Küp küp'], ['julienne','Jülyen'], ['mince','İnce kıyım'], ['chop','Doğrama']
+  ].map(([key,label]) => `<button class="cut-technique" type="button" data-cut-technique="${key}">${label}</button>`).join('');
+  elements.cutGuides.innerHTML = '';
+  elements.cutFood.textContent = /(et|tavuk|kiyma)/.test(normalizeText(step)) ? '🥩' : '🥕';
+  elements.cutFood.classList.remove('chopped');
+  elements.cutProgressText.textContent = 'Önce kesme tekniğini seçin, sonra kesikli çizgilere dokunun.';
+  elements.cuttingMinigame.classList.remove('hidden');
+}
+
+function renderCutGuides(technique) {
+  gameState.cutTechnique = technique;
+  gameState.cutHits = new Set();
+  elements.cuttingBoard.dataset.technique = technique;
+  elements.cutFood.classList.remove('chopped');
+  elements.cutTechniqueButtons.querySelectorAll('[data-cut-technique]').forEach(button => button.classList.toggle('active', button.dataset.cutTechnique === technique));
+  const guides = [];
+  if (technique === 'slice' || technique === 'julienne') {
+    const count = technique === 'julienne' ? 7 : 4;
+    for (let i=0;i<count;i++) guides.push(`left:${12 + i * (76/(count-1))}%;`);
+  } else if (technique === 'dice') {
+    [22,50,78].forEach(left => guides.push(`left:${left}%;`));
+    [25,55,82].forEach(top => guides.push(`top:${top}%;`));
+  } else if (technique === 'mince') {
+    [-18,-10,0,10,18,27].forEach((rot,i) => guides.push(`top:${10+i*15}%;--rot:${rot}deg;`));
+  } else {
+    [14,31,48,65,82].forEach(top => guides.push(`top:${top}%;`));
+  }
+  elements.cutGuides.innerHTML = guides.map((style,index) => `<button class="cut-guide" type="button" data-cut-guide="${index}" style="${style}" aria-label="Kesme çizgisi ${index+1}"></button>`).join('');
+  elements.cutProgressText.textContent = `${guides.length} kesikli çizgiyi tamamlayın.`;
+}
+
+function hitCutGuide(button) {
+  if (!gameState?.cutTechnique || button.classList.contains('done')) return;
+  const index = Number(button.dataset.cutGuide);
+  gameState.cutHits.add(index);
+  button.classList.add('done');
+  const total = elements.cutGuides.querySelectorAll('[data-cut-guide]').length;
+  elements.cutProgressText.textContent = `${gameState.cutHits.size} / ${total} kesim tamamlandı.`;
+  if (gameState.cutHits.size >= total) {
+    elements.cutFood.classList.add('chopped');
+    const chosen = gameState.cutTechnique;
+    setTimeout(() => {
+      elements.cuttingMinigame.classList.add('hidden');
+      commitGameAction('cut', chosen);
+    }, 450);
+  }
+}
+
+function finishGame() {
+  const recipe = currentGameRecipe();
+  if (!gameState || !recipe) return;
+  gameState.phase = 'result';
+  highlightRecommendedStation('');
+  updateGameProgress();
+  const errors = [...gameState.ingredientErrors];
+  gameState.actions.forEach(action => {
+    if (action.expected !== action.chosen) errors.push(`${action.stepIndex + 1}. adımda “${GAME_ACTION_LABELS[action.expected]}” beklenirken “${GAME_ACTION_LABELS[action.chosen]}” seçildi.`);
+    else if (action.expectedTechnique && action.expectedTechnique !== action.technique) errors.push(`${action.stepIndex + 1}. adımda ${action.expectedTechnique} kesim tekniği yerine ${action.technique || 'başka bir teknik'} kullanıldı.`);
+  });
+  if (gameState.actions.length < recipe.steps.length) errors.push('Bazı tarif aşamaları tamamlanmadı.');
+  elements.pantryView.classList.add('hidden');
+  elements.kitchenView.classList.add('hidden');
+  elements.gameResult.classList.remove('hidden');
+  if (!errors.length) {
+    elements.gameResult.classList.add('success');
+    elements.gameResult.innerHTML = `<div class="game-result-card"><div class="game-result-icon">🏆</div><p class="eyebrow">Tarif tamamlandı</p><h2>Mükemmel pişirdin!</h2><p>Malzemeleri ve tüm aşamaları tarifteki gibi uyguladın.</p><button class="primary-button" type="button" data-game-result-action="restart">Tekrar oyna</button> <button class="secondary-button" type="button" data-game-result-action="exit">Başka tarif seç</button></div>`;
+    setGameMessage('success', 'Tarif doğru tamamlandı.');
+    playSuccessSound();
+  } else {
+    elements.gameResult.classList.add('failure');
+    elements.gameResult.innerHTML = `<div class="game-result-card"><div class="game-result-icon">🧑‍🍳</div><p class="eyebrow">Mutfak kontrolü</p><h2>Tarifi yeniden dene</h2><p>Yemeğin tarifteki sonuçla eşleşmemesinin nedenleri:</p><ul>${errors.map(error => `<li>${escapeHtml(error)}</li>`).join('')}</ul><button class="primary-button" type="button" data-game-result-action="restart">Baştan başla</button> <button class="secondary-button" type="button" data-game-result-action="exit">Tarif seçimine dön</button></div>`;
+    setGameMessage('error', 'Bazı seçimler tarifle eşleşmedi. Nedenleri inceleyip en baştan başlayın.');
+  }
+}
+
+function playSuccessSound() {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((frequency,index) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = 'sine'; oscillator.frequency.value = frequency;
+      gain.gain.setValueAtTime(.0001, context.currentTime + index*.11);
+      gain.gain.exponentialRampToValueAtTime(.16, context.currentTime + index*.11 + .02);
+      gain.gain.exponentialRampToValueAtTime(.0001, context.currentTime + index*.11 + .22);
+      oscillator.connect(gain); gain.connect(context.destination);
+      oscillator.start(context.currentTime + index*.11); oscillator.stop(context.currentTime + index*.11 + .24);
+    });
+    setTimeout(() => context.close(), 1200);
+  } catch { /* Ses desteklenmiyorsa oyun sessiz devam eder. */ }
+}
+
+
+async function exportData() {
+  const payload = { app: 'Lezzet Defteri', version: 4, exportedAt: new Date().toISOString(), theme: loadTheme(), recipes, shoppingItems };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = `lezzet-defteri-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast('Tarifler ve fotoğraflar dışa aktarıldı.');
+}
+
+async function importData(file) {
+  if (!file) return;
+  try {
+    const parsed = JSON.parse(await file.text());
+    const incoming = Array.isArray(parsed) ? parsed : parsed.recipes;
+    if (!Array.isArray(incoming)) throw new Error('Geçersiz veri yapısı');
+    const normalized = incoming.map(normalizeRecipe).filter(item => item.title && item.ingredients.length && item.steps.length);
+    if (!normalized.length) throw new Error('Geçerli tarif bulunamadı');
+    if (!window.confirm(`${normalized.length} tarif içe aktarılacak ve mevcut tariflerin yerini alacak. Devam edilsin mi?`)) return;
+    await storage.replaceAll(normalized);
+    recipes = normalized;
+    if (parsed.theme) applyTheme(parsed.theme, true);
+    if (Array.isArray(parsed.shoppingItems)) {
+      shoppingItems = parsed.shoppingItems.map(item => ({
+        id: item.id || uid(), text: String(item.text || '').trim(), checked: Boolean(item.checked),
+        recipeId: item.recipeId || null, createdAt: item.createdAt || new Date().toISOString()
+      })).filter(item => item.text);
+      saveShoppingItems();
+    }
+    renderAll();
+    showToast(`${recipes.length} tarif ve alışveriş listesi içe aktarıldı.`);
+  } catch (error) {
+    console.error(error);
+    showToast('Dosya içe aktarılamadı. Geçerli bir JSON yedeği seçin.');
+  } finally { elements.importInput.value = ''; }
+}
+
+const defaultTheme = { primary: '#6c4cff', accent: '#ffb547', background: '#f6f3ff' };
+const themePresets = [
+  { name: 'Mor', primary: '#6c4cff', accent: '#ffb547', background: '#f6f3ff' },
+  { name: 'Orman', primary: '#23765a', accent: '#f5ad3d', background: '#f1f7f3' },
+  { name: 'Mercan', primary: '#d9506f', accent: '#ffc857', background: '#fff4f6' },
+  { name: 'Okyanus', primary: '#176fa6', accent: '#45d0c1', background: '#eff8fc' }
+];
+
+function loadTheme() {
+  try { return { ...defaultTheme, ...JSON.parse(localStorage.getItem(THEME_KEY) || '{}') }; }
+  catch { return { ...defaultTheme }; }
+}
+
+function hexToRgb(hex) {
+  const clean = hex.replace('#', '');
+  const n = parseInt(clean.length === 3 ? clean.split('').map(c => c + c).join('') : clean, 16);
+  return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+}
+
+function rgbToHex({ r, g, b }) {
+  return `#${[r, g, b].map(v => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0')).join('')}`;
+}
+
+function blend(hex, target, amount) {
+  const a = hexToRgb(hex); const b = hexToRgb(target);
+  return rgbToHex({ r: a.r + (b.r - a.r) * amount, g: a.g + (b.g - a.g) * amount, b: a.b + (b.b - a.b) * amount });
+}
+
+function applyTheme(theme, persist = false) {
+  const safe = {
+    primary: /^#[0-9a-f]{6}$/i.test(theme.primary) ? theme.primary : defaultTheme.primary,
+    accent: /^#[0-9a-f]{6}$/i.test(theme.accent) ? theme.accent : defaultTheme.accent,
+    background: /^#[0-9a-f]{6}$/i.test(theme.background) ? theme.background : defaultTheme.background
+  };
+  const root = document.documentElement.style;
+  root.setProperty('--primary', safe.primary);
+  root.setProperty('--primary-dark', blend(safe.primary, '#000000', .22));
+  root.setProperty('--primary-soft', blend(safe.primary, '#ffffff', .88));
+  root.setProperty('--accent', safe.accent);
+  root.setProperty('--accent-dark', blend(safe.accent, '#000000', .62));
+  root.setProperty('--bg', safe.background);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', safe.primary);
+  elements.primaryColorInput.value = safe.primary;
+  elements.accentColorInput.value = safe.accent;
+  elements.backgroundColorInput.value = safe.background;
+  if (persist) {
+    try { localStorage.setItem(THEME_KEY, JSON.stringify(safe)); }
+    catch { showToast('Renkler bu oturum için uygulandı; tarayıcı kalıcı ayara izin vermedi.'); }
+  }
+  renderThemePresets(safe);
+}
+
+function renderThemePresets(active = loadTheme()) {
+  elements.themePresets.innerHTML = themePresets.map((theme, index) => {
+    const selected = theme.primary.toLowerCase() === active.primary.toLowerCase() && theme.accent.toLowerCase() === active.accent.toLowerCase();
+    return `<button class="theme-preset${selected ? ' active' : ''}" type="button" data-theme-index="${index}" title="${theme.name}"><div class="preset-swatch" style="background:linear-gradient(135deg,${theme.primary},${theme.accent})"></div></button>`;
+  }).join('');
+}
+
+function openThemeModal() {
+  const theme = loadTheme();
+  applyTheme(theme, false);
+  openModal(elements.themeModal);
+}
+
+let toastTimer;
+function showToast(message) {
+  if (!elements.toast) return;
+  elements.toast.textContent = message;
+  elements.toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => elements.toast.classList.remove('show'), 2600);
+}
+
+function recipeIdFromTarget(target) { return target.closest('.recipe-card')?.dataset.id; }
+
+async function handleCardAction(event) {
+  const button = event.target.closest('[data-action]');
+  if (!button) return;
+  const id = recipeIdFromTarget(button);
+  if (!id) return;
+  if (button.dataset.action === 'view') openRecipeModal(id);
+  if (button.dataset.action === 'favorite') await toggleFavorite(id);
+  if (button.dataset.action === 'ate') await markAsEaten(id);
+  if (button.dataset.action === 'edit') editRecipe(id);
+}
+
+function renderSuggestedTags() {
+  const tags = ['tavuk', 'et', 'kıyma', 'balık', 'somon', 'yumurta', 'makarna', 'pirinç', 'nohut', 'mercimek', 'sebze', 'patlıcan', 'mantar', 'peynir', 'domates', 'avokado'];
+  elements.suggestedTagButtons.innerHTML = tags.map(tag => `<button class="suggested-tag" type="button" data-suggested-tag="${tag}">+ ${tag}</button>`).join('');
+}
+
+function bindEvents() {
+  elements.navButtons.forEach(button => button.addEventListener('click', () => button.dataset.page && showPage(button.dataset.page)));
+  elements.recipeForm.addEventListener('submit', handleSubmit);
+  elements.cancelEditButton.addEventListener('click', () => { resetEditor(); showPage('recipes'); });
+  elements.clearFormButton.addEventListener('click', () => {
+    if (window.confirm('Formdaki bilgiler temizlensin mi?')) resetEditor();
+  });
+  elements.photoInput.addEventListener('change', event => handlePhotoChange(event.target.files?.[0]));
+  elements.removePhotoButton.addEventListener('click', () => {
+    pendingImage = ''; isRemovingImage = true; updatePhotoPreview(); showToast('Fotoğraf kaldırıldı. Değişikliği kaydedin.');
+  });
+  elements.randomRecipeButton.addEventListener('click', chooseRandomRecipe);
+  elements.openRandomButton.addEventListener('click', () => currentRandomId && openRecipeModal(currentRandomId));
+  elements.searchInput.addEventListener('input', renderRecipesPage);
+  [elements.cultureFilter, elements.mealFilter, elements.ingredientFilter, elements.favoriteFilter, elements.sortFilter]
+    .forEach(select => select.addEventListener('change', renderRecipesPage));
+  elements.clearFiltersButton.addEventListener('click', clearFilters);
+  elements.activeFilterChips.addEventListener('click', event => {
+    const button = event.target.closest('[data-clear-filter]');
+    if (button) clearOneFilter(button.dataset.clearFilter);
+  });
+  [elements.recipeList, elements.frequentRecipes, elements.favoriteRecipes].forEach(grid => grid.addEventListener('click', handleCardAction));
+
+  elements.closeModalButton.addEventListener('click', () => closeModal(elements.recipeModal));
+  elements.recipeModal.addEventListener('click', async event => {
+    if (event.target.closest('[data-close-modal]')) closeModal(elements.recipeModal);
+    const button = event.target.closest('[data-modal-action]');
+    if (!button) return;
+    const { modalAction: action, id } = button.dataset;
+    if (action === 'ate') { await markAsEaten(id); openRecipeModal(id); }
+    if (action === 'favorite') { await toggleFavorite(id); openRecipeModal(id); }
+    if (action === 'shopping') openIngredientPicker(id);
+    if (action === 'play') startRecipeGame(id);
+    if (action === 'edit') editRecipe(id);
+    if (action === 'delete') await deleteRecipe(id);
+  });
+
+  [elements.themeButton, elements.mobileThemeButton].forEach(button => button.addEventListener('click', openThemeModal));
+  elements.closeThemeButton.addEventListener('click', () => closeModal(elements.themeModal));
+  elements.themeModal.addEventListener('click', event => {
+    if (event.target.closest('[data-close-theme]')) closeModal(elements.themeModal);
+  });
+  elements.themePresets.addEventListener('click', event => {
+    const button = event.target.closest('[data-theme-index]');
+    if (!button) return;
+    const theme = themePresets[Number(button.dataset.themeIndex)];
+    elements.primaryColorInput.value = theme.primary;
+    elements.accentColorInput.value = theme.accent;
+    elements.backgroundColorInput.value = theme.background;
+    applyTheme(theme, false);
+  });
+  [elements.primaryColorInput, elements.accentColorInput, elements.backgroundColorInput].forEach(input => input.addEventListener('input', () => {
+    applyTheme({ primary: elements.primaryColorInput.value, accent: elements.accentColorInput.value, background: elements.backgroundColorInput.value }, false);
+  }));
+  elements.saveThemeButton.addEventListener('click', () => {
+    applyTheme({ primary: elements.primaryColorInput.value, accent: elements.accentColorInput.value, background: elements.backgroundColorInput.value }, true);
+    closeModal(elements.themeModal); showToast('Renkler kaydedildi.');
+  });
+  elements.resetThemeButton.addEventListener('click', () => applyTheme(defaultTheme, true));
+
+  elements.suggestedTagButtons.addEventListener('click', event => {
+    const button = event.target.closest('[data-suggested-tag]');
+    if (!button) return;
+    const tags = parseCommaList(elements.ingredientTagsInput.value);
+    if (!tags.includes(button.dataset.suggestedTag)) tags.push(button.dataset.suggestedTag);
+    elements.ingredientTagsInput.value = tags.join(', ');
+  });
+  elements.socialImportForm.addEventListener('submit', handleSocialImport);
+  elements.clearImportButton.addEventListener('click', resetSocialImport);
+  elements.reanalyzeImportButton.addEventListener('click', reanalyzeImportText);
+  elements.saveImportedRecipeButton.addEventListener('click', saveImportedRecipe);
+
+  elements.shoppingForm.addEventListener('submit', event => {
+    event.preventDefault();
+    const text = elements.shoppingInput.value.trim();
+    if (!text) return;
+    const added = addShoppingItems([text]);
+    elements.shoppingInput.value = '';
+    showToast(added ? 'Alışveriş maddesi eklendi.' : 'Bu madde listede zaten var.');
+  });
+  elements.shoppingList.addEventListener('change', event => {
+    const row = event.target.closest('[data-shopping-id]');
+    if (!row || event.target.type !== 'checkbox') return;
+    const item = shoppingItems.find(entry => entry.id === row.dataset.shoppingId);
+    if (!item) return;
+    item.checked = event.target.checked;
+    saveShoppingItems(); renderShoppingList();
+  });
+  elements.shoppingList.addEventListener('click', event => {
+    const button = event.target.closest('.shopping-delete');
+    const row = event.target.closest('[data-shopping-id]');
+    if (!button || !row) return;
+    shoppingItems = shoppingItems.filter(item => item.id !== row.dataset.shoppingId);
+    saveShoppingItems(); renderShoppingList();
+  });
+  elements.clearCheckedShoppingButton.addEventListener('click', () => {
+    const count = shoppingItems.filter(item => item.checked).length;
+    shoppingItems = shoppingItems.filter(item => !item.checked);
+    saveShoppingItems(); renderShoppingList(); showToast(`${count} tamamlanan madde temizlendi.`);
+  });
+  elements.clearShoppingButton.addEventListener('click', () => {
+    if (!shoppingItems.length || !window.confirm('Alışveriş listesindeki tüm maddeler silinsin mi?')) return;
+    shoppingItems = []; saveShoppingItems(); renderShoppingList(); showToast('Alışveriş listesi temizlendi.');
+  });
+
+  elements.closeIngredientPickerButton.addEventListener('click', () => closeModal(elements.ingredientPickerModal));
+  elements.cancelIngredientPickerButton.addEventListener('click', () => closeModal(elements.ingredientPickerModal));
+  elements.ingredientPickerModal.addEventListener('click', event => {
+    if (event.target.closest('[data-close-ingredient-picker]')) closeModal(elements.ingredientPickerModal);
+  });
+  elements.selectAllIngredientsButton.addEventListener('click', () => elements.ingredientPickerList.querySelectorAll('input').forEach(input => { input.checked = true; }));
+  elements.selectNoIngredientsButton.addEventListener('click', () => elements.ingredientPickerList.querySelectorAll('input').forEach(input => { input.checked = false; }));
+  elements.addSelectedIngredientsButton.addEventListener('click', addSelectedRecipeIngredients);
+
+  elements.gameSearchInput.addEventListener('input', renderGameRecipeList);
+  elements.gameRecipeList.addEventListener('click', event => {
+    const button = event.target.closest('[data-start-game]');
+    if (button) startRecipeGame(button.dataset.startGame);
+  });
+  elements.exitGameButton.addEventListener('click', exitGame);
+  elements.openGameRecipeBookButton.addEventListener('click', openGameRecipeBook);
+  elements.closeGameRecipeBookButton.addEventListener('click', () => closeModal(elements.gameRecipeBookModal));
+  elements.gameRecipeBookModal.addEventListener('click', event => {
+    if (event.target.closest('[data-close-game-recipe-book]')) closeModal(elements.gameRecipeBookModal);
+  });
+  elements.pantryShelves.addEventListener('click', event => {
+    const button = event.target.closest('[data-pantry-key]');
+    if (!button || !gameState) return;
+    const key = button.dataset.pantryKey;
+    if (gameState.selectedIngredients.has(key)) gameState.selectedIngredients.delete(key); else gameState.selectedIngredients.add(key);
+    renderPantry();
+  });
+  elements.confirmPantryButton.addEventListener('click', confirmPantrySelection);
+  document.querySelector('.kitchen-stations').addEventListener('click', event => {
+    const station = event.target.closest('[data-game-action]');
+    if (station) handleKitchenAction(station.dataset.gameAction);
+  });
+  elements.advanceTimeButton.addEventListener('click', () => {
+    if (!gameState?.pendingWait) return;
+    gameState.pendingWait = false;
+    elements.advanceTimeButton.classList.add('hidden');
+    commitGameAction('wait');
+  });
+  elements.restartGameButton.addEventListener('click', () => gameState && startRecipeGame(gameState.recipeId));
+  elements.cutTechniqueButtons.addEventListener('click', event => {
+    const button = event.target.closest('[data-cut-technique]');
+    if (button) renderCutGuides(button.dataset.cutTechnique);
+  });
+  elements.cutGuides.addEventListener('click', event => {
+    const guide = event.target.closest('[data-cut-guide]');
+    if (guide) hitCutGuide(guide);
+  });
+  elements.cancelCutButton.addEventListener('click', () => elements.cuttingMinigame.classList.add('hidden'));
+  elements.gameResult.addEventListener('click', event => {
+    const button = event.target.closest('[data-game-result-action]');
+    if (!button) return;
+    if (button.dataset.gameResultAction === 'restart' && gameState) startRecipeGame(gameState.recipeId);
+    if (button.dataset.gameResultAction === 'exit') exitGame();
+  });
+
+  elements.exportButton.addEventListener('click', exportData);
+  elements.importInput.addEventListener('change', event => importData(event.target.files?.[0]));
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    closeModal(elements.recipeModal); closeModal(elements.themeModal); closeModal(elements.ingredientPickerModal); closeModal(elements.gameRecipeBookModal);
+    elements.cuttingMinigame.classList.add('hidden');
+  });
+}
+
+async function registerServiceWorker() {
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    try { await navigator.serviceWorker.register('./service-worker.js'); }
+    catch (error) { console.warn('Çevrimdışı çalışma kaydı yapılamadı.', error); }
+  }
+}
+
+async function init() {
+  bindElements();
+  applyTheme(loadTheme(), false);
+  renderSuggestedTags();
+  bindEvents();
+  loadShoppingItems();
+  await loadInitialData();
+  renderAll();
+  await registerServiceWorker();
+}
+
+init().catch(error => {
+  console.error(error);
+  bindElements();
+  showToast('Uygulama başlatılamadı. Sayfayı yenileyin.');
+});
+
+  </script>
+</body>
+</html>
